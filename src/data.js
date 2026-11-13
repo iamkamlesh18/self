@@ -1,5 +1,4 @@
-(() => {
-  const inhale = (seconds, from = .55, to = 1) => ["Breathe in", seconds, from, to];
+const inhale = (seconds, from = .55, to = 1) => ["Breathe in", seconds, from, to];
   const exhale = (seconds, from = 1, to = .55) => ["Breathe out", seconds, from, to];
   const hold = (seconds, scale = 1) => ["Rest softly", seconds, scale, scale];
   const bellows = [];
@@ -17,7 +16,7 @@
   }
   pumps.push(["Rest · breathe naturally", 15, .9, .7]);
 
-  window.ROOTED_CONTENT = {
+export const DATA = {
     tips: [
       "A pause can be the beginning of a different response.",
       "Let attention rest here; the next step can wait.",
@@ -187,5 +186,4 @@
     ],
     binaural: [{ label: "Delta", beat: 2 }, { label: "Theta", beat: 6 }, { label: "Alpha", beat: 10 }],
     journeyDurations: [10, 20, 30, 60]
-  };
-})();
+};

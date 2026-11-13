@@ -24,58 +24,18 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Validate and prepare site
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build Vite site
         run: |
-          node --check app.js
-          node --check content.js
-          python3 - <<'PY'
-          from collections import Counter
-          from html.parser import HTMLParser
-          from pathlib import Path
-          import re
-
-          class SiteAudit(HTMLParser):
-              def __init__(self):
-                  super().__init__()
-                  self.ids = []
-                  self.assets = []
-
-              def handle_starttag(self, tag, attrs):
-                  attrs = dict(attrs)
-                  if "id" in attrs:
-                      self.ids.append(attrs["id"])
-                  if tag == "link" and attrs.get("rel") == "stylesheet":
-                      self.assets.append(attrs.get("href", ""))
-                  if tag == "script" and attrs.get("src"):
-                      self.assets.append(attrs["src"])
-
-          for required in ("index.html", "styles.css", "content.js", "app.js"):
-              if not Path(required).is_file():
-                  raise SystemExit(f"Required site file is missing: {required}")
-
-          audit = SiteAudit()
-          audit.feed(Path("index.html").read_text(encoding="utf-8"))
-          duplicates = [name for name, count in Counter(audit.ids).items() if count > 1]
-          if duplicates:
-              raise SystemExit(f"Duplicate HTML IDs: {', '.join(duplicates)}")
-          missing = [
-              asset for asset in audit.assets
-              if asset and not asset.startswith(("https://", "http://"))
-              and not Path(asset).is_file()
-          ]
-          if missing:
-              raise SystemExit(f"Missing local assets: {', '.join(missing)}")
-          js = Path("app.js").read_text(encoding="utf-8")
-          missing_ids = sorted(set(re.findall(r'\$\("([^"]+)"\)', js)) - set(audit.ids))
-          if missing_ids:
-              raise SystemExit(f"JavaScript refers to missing HTML IDs: {', '.join(missing_ids)}")
-          tabs = re.findall(r'\["([a-z-]+)", "[A-Za-z]+"\]', js.split("const TABS = [", 1)[1].split("];", 1)[0])
-          missing_panels = [f"t-{tab}" for tab in tabs if f"t-{tab}" not in audit.ids]
-          if missing_panels:
-              raise SystemExit(f"Tabs refer to missing panels: {', '.join(missing_panels)}")
-          PY
-          mkdir _site
-          cp index.html styles.css content.js app.js _site/
+          npm run build
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
@@ -85,7 +45,7 @@ jobs:
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: _site
+          path: dist
 
       - name: Deploy site
         id: deployment

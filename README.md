@@ -21,10 +21,18 @@ Be concise. Prioritize output over explanation.
 
 ## Site
 
-Come Home is a dependency-free static site. Start it locally with `python3 -m http.server 8000`, then open `http://localhost:8000`.
+Come Home is a React application built with Vite. Start it locally with:
 
-- `index.html` contains the accessible page structure.
-- `styles.css` contains the responsive theme and motion.
-- `content.js` holds practice copy and reference-derived data.
-- `app.js` contains interaction, session, and audio behavior.
-- `.github/workflows/deploy.yml` validates and publishes the site to GitHub Pages after pushes to `main`. Set the repository's Pages source to **GitHub Actions** if it is not already enabled.
+```sh
+npm install
+npm run dev
+```
+
+Vite prints the local URL in the terminal. Create a production build with `npm run build`; the output is written to `dist/`.
+
+- `src/components/` contains the reusable header, navigation, footer, and practice sections.
+- `src/data.js` contains practice copy and reference-derived data.
+- `src/index.css` preserves the responsive theme and motion.
+- `src/App.jsx` manages interaction, sessions, saved progress, and audio behavior.
+- `vite.config.js` sets the GitHub Pages base path to `/self/`.
+- `.github/workflows/deploy.yml` installs dependencies, builds the app, and publishes `dist/` to GitHub Pages after pushes to `main`. Set the repository's Pages source to **GitHub Actions** if it is not already enabled.
