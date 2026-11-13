@@ -6,10 +6,13 @@ function formatTime(seconds) {
 export default function PersistentPlayer({
   audioItems,
   hasAudio,
+  localAudioActive,
   audioIsPaused,
   onToggleAudio,
   onStopAudio,
   youtubeActive,
+  youtubePlaying,
+  onToggleYoutube,
   youtubeVolume,
   onYoutubeVolumeStep,
   breathSession,
@@ -48,7 +51,8 @@ export default function PersistentPlayer({
               <button type="button" aria-label="Raise YouTube volume" disabled={youtubeVolume === 100} onClick={() => onYoutubeVolumeStep(10)}>＋</button>
             </div>
           )}
-          <button type="button" aria-label={audioIsPaused ? "Resume all audio" : "Pause all audio"} onClick={onToggleAudio}>{audioIsPaused ? "▶" : "Ⅱ"}</button>
+          {youtubeActive && <button type="button" aria-label={youtubePlaying ? "Pause YouTube audio" : "Resume YouTube audio"} onClick={onToggleYoutube}>{youtubePlaying ? "Ⅱ" : "▶"}</button>}
+          {localAudioActive && <button type="button" aria-label={audioIsPaused ? "Resume practice sounds" : "Pause practice sounds"} onClick={onToggleAudio}>{audioIsPaused ? "▶" : "Ⅱ"}</button>}
           <button type="button" className="mini-secondary" aria-label="Stop all audio" onClick={onStopAudio}>×</button>
         </div>
       )}

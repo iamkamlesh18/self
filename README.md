@@ -27,7 +27,7 @@ Vite prints the local development URL. The production build is written to `dist/
 ## Project map
 
 - `src/App.jsx` mounts the app with `HashRouter` so every page works after a GitHub Pages refresh.
-- `src/app/AppShell.jsx` owns shared practice, preference, timer, and audio state; a running breathing practice continues for one minute after leaving its page, then pauses.
+- `src/app/AppShell.jsx` owns shared practice, preference, timer, and audio state; YouTube can be paused independently, and a running breathing practice continues for one minute after leaving its page, then pauses.
 - `src/modules/<page>/` keeps each page's component, visual styles, and content data together.
 - `src/shared/components/` contains the header, navigation, footer, reusable phrase and wisdom views, and the persistent cross-page audio/practice dock.
 - `src/theme/tokens.css` is the separate light/dark palette and design-token file; edit it to restyle the whole site without changing page content.

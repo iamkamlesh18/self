@@ -145,7 +145,6 @@ export default function AppShell() {
   const journeyTimerRef = useRef(0);
   const youtubeTimerRef = useRef(0);
   const audioPausedRef = useRef(false);
-  const youtubeWasPlayingRef = useRef(false);
   const previousBreathStepRef = useRef(-1);
   const journeyRef = useRef(journey);
   journeyRef.current = journey;
@@ -347,6 +346,11 @@ export default function AppShell() {
     setYoutube(current => ({ ...current, wantPlay: false }));
     sendYoutubeCommand("pauseVideo");
   }, [sendYoutubeCommand]);
+
+  const toggleYoutubePlayback = useCallback(() => {
+    if (youtube.playing || youtube.wantPlay) pauseYoutube();
+    else playYoutube();
+  }, [pauseYoutube, playYoutube, youtube.playing, youtube.wantPlay]);
 
   const finishSession = useCallback((completed = false) => {
     const current = sessionRef.current;
@@ -909,29 +913,18 @@ export default function AppShell() {
     if (paused) {
       setAudioPaused(false);
       if (engine.context?.state === "suspended") engine.context.resume().catch(error => console.warn("Audio could not resume.", error));
-      if (youtubeWasPlayingRef.current) {
-        youtubeWasPlayingRef.current = false;
-        setYoutube(current => ({ ...current, wantPlay: true }));
-        sendYoutubeCommand("playVideo");
-      }
     } else {
       setAudioPaused(true);
       if (engine.context?.state === "running") engine.context.suspend().catch(error => console.warn("Audio could not pause.", error));
-      youtubeWasPlayingRef.current = youtube.playing || youtube.wantPlay;
-      if (youtubeWasPlayingRef.current) {
-        setYoutube(current => ({ ...current, wantPlay: false }));
-        sendYoutubeCommand("pauseVideo");
-      }
     }
     emitAudioChange();
-  }, [audioPaused, emitAudioChange, sendYoutubeCommand, youtube.playing, youtube.wantPlay]);
+  }, [audioPaused, emitAudioChange]);
 
   const stopAllAudio = useCallback(() => {
     stopAllNature();
     window.clearTimeout(journeyTimerRef.current);
     setJourney(current => ({ ...current, active: false }));
     removeTone();
-    youtubeWasPlayingRef.current = false;
     setYoutube(current => ({ ...current, wantPlay: false }));
     sendYoutubeCommand("pauseVideo");
     emitAudioChange();
@@ -1093,11 +1086,12 @@ export default function AppShell() {
   const audioItems = [
     ...(tone ? [tone.label] : []),
     ...activeSounds.map(id => DATA.natureSounds.find(sound => sound.id === id)?.name || id),
-    ...(youtube.playing || youtube.wantPlay || youtubeWasPlayingRef.current ? ["YouTube"] : [])
+    ...(youtube.playing || youtube.wantPlay ? ["YouTube"] : [])
   ];
   const hasAudio = useMemo(() => audioItems.length > 0, [audioVersion, activeSounds, tone, youtube.playing, youtube.wantPlay]);
   const audioIsPaused = useMemo(() => audioPaused || Boolean(engineRef.current.context && engineRef.current.context.state !== "running"), [audioPaused, audioVersion]);
-  const youtubeActive = youtube.playing || youtube.wantPlay || youtubeWasPlayingRef.current;
+  const youtubeActive = youtube.playing || youtube.wantPlay;
+  const localAudioActive = Boolean(tone || activeSounds.length || journey.active);
   const backgroundBreathSeconds = backgroundBreathUntil === null
     ? 60
     : Math.min(60, Math.max(0, Math.ceil((backgroundBreathUntil - now) / 1000)));
@@ -1138,16 +1132,19 @@ export default function AppShell() {
           <Route path="/journey" element={<JourneyPage history={history} streak={streak} onClear={handleClearHistory} />} />
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
-        <MusicPage active={active} url={youtubeUrl} externalUrl={externalYoutubeUrl} iframeRef={iframeRef} src={musicSrc} withSessions={withSessions} error={youtube.error} playing={youtube.playing || youtube.wantPlay} volume={youtubeVolume} onUrl={setYoutubeUrl} onLoad={handleYoutubeLoad} onWithSessions={setWithSessions} onTogglePlayback={() => youtube.playing || youtube.wantPlay ? pauseYoutube() : playYoutube()} onVolumeChange={changeYoutubeVolume} onVolumeStep={stepYoutubeVolume} />
+        <MusicPage active={active} url={youtubeUrl} externalUrl={externalYoutubeUrl} iframeRef={iframeRef} src={musicSrc} withSessions={withSessions} error={youtube.error} playing={youtube.playing || youtube.wantPlay} volume={youtubeVolume} onUrl={setYoutubeUrl} onLoad={handleYoutubeLoad} onWithSessions={setWithSessions} onTogglePlayback={toggleYoutubePlayback} onVolumeChange={changeYoutubeVolume} onVolumeStep={stepYoutubeVolume} />
       </main>
       <Footer />
       <PersistentPlayer
         audioItems={audioItems}
         hasAudio={hasAudio}
+        localAudioActive={localAudioActive}
         audioIsPaused={audioIsPaused}
         onToggleAudio={toggleAllAudio}
         onStopAudio={stopAllAudio}
         youtubeActive={youtubeActive}
+        youtubePlaying={youtube.playing || youtube.wantPlay}
+        onToggleYoutube={toggleYoutubePlayback}
         youtubeVolume={youtubeVolume}
         onYoutubeVolumeStep={stepYoutubeVolume}
         breathSession={breathingAway ? session : null}
