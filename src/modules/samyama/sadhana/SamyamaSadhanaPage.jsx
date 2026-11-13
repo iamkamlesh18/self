@@ -109,6 +109,7 @@ export default function SamyamaSadhanaPage() {
         <article className="card sadhana-card">
           <p className="eyebrow">THEN · ANSWER IN YOUR OWN WORDS</p>
           <h2 className="sadhana-question-title">{questionText}</h2>
+          <p className="sadhana-source-theme">{selectedQuestion.sourceTheme}</p>
           {questionId === "custom" && (
             <label className="sadhana-field">Your question
               <input value={customQuestion} onChange={event => setCustomQuestion(event.target.value)} maxLength={120} placeholder="Write a question for yourself" />
@@ -165,7 +166,7 @@ export default function SamyamaSadhanaPage() {
         </article>
       )}
 
-      <aside className="safety-note">This original reflection is inspired by the staged practice and attention themes in the supplied commentary on Patañjali's Yoga Sutras, III.1–6. Traditions interpret these ideas differently; this gentle exercise promises no special state or result. Pause or stop whenever you wish.</aside>
+      <aside className="safety-note">This original reflection adapts themes from the supplied commentaries: attention to external objects, noticing the mind and senses, friendliness, gradual practice, and non-attachment to extraordinary attainments. Traditions interpret these ideas differently; this gentle exercise promises no special state or result. Pause or stop whenever you wish.</aside>
     </section>
   );
 }

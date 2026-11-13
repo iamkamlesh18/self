@@ -130,7 +130,26 @@ export default function SamyamaPage() {
         <p className="samyama-completions">{completions} {completions === 1 ? "practice" : "practices"} completed on this device</p>
       </article>
 
-      <aside className="safety-note">The three terms describe a traditional framework in Patañjali's Yoga Sutras (III.1–6); teachers interpret them in different ways. This guided reflection is not a claim of samādhi, special powers, or a particular result. Keep your eyes open if that feels safer, and stop whenever you wish. The supplied commentaries also caution against making extraordinary attainments the goal.</aside>
+      <details className="card samyama-reference">
+        <summary>How the three supplied references shape this practice</summary>
+        <div className="samyama-reference-grid">
+          <article>
+            <h3>Samyama on External Objects</h3>
+            <p>Offers themes of attention to sounds, objects, and moments. The site adapts these as relaxed listening and noticing—never sun-gazing or a promise of unusual perception.</p>
+          </article>
+          <article>
+            <h3>Samyama on Internal Centres</h3>
+            <p>Explores mind, impressions, senses, and steadiness. The practice uses these as gentle ways to notice present experience, not as diagnosis or memory recovery.</p>
+          </article>
+          <article>
+            <h3>Samyama In-Depth</h3>
+            <p>Highlights friendliness, gradual practice, and caution about attachment to attainments. These inform the kindness focus, three stages, and the reminder not to chase special results.</p>
+          </article>
+        </div>
+        <p className="samyama-reference-note">These are beginner-friendly adaptations of traditional commentaries by Swami Sivananda. Their spiritual and extraordinary claims are presented as traditional beliefs, not verified outcomes or promises.</p>
+      </details>
+
+      <aside className="safety-note">The three terms describe a traditional framework in Patañjali's Yoga Sutras; teachers interpret them in different ways. This guided reflection makes no claim of samādhi, special powers, or a particular result. Keep your eyes open if that feels safer, and stop whenever you wish. The supplied commentaries also caution against making extraordinary attainments the goal.</aside>
     </section>
   );
 }

@@ -3,31 +3,37 @@ export const SAMYAMA_FOCI = [
     id: "breath",
     name: "Natural breath",
     prompt: "Notice one place where the breath is easy to feel. Let it move on its own.",
-    reference: "Patañjali's Yoga Sutras, III.1–4"
+    reference: "A gentle present-moment adaptation"
   },
   {
     id: "sound",
     name: "A sound",
     prompt: "Listen to one sound, then include its beginning, changing tone, and fading.",
-    reference: "Vijñāna Bhairava Tantra · sound and listening themes"
+    reference: "Samyama on External Objects · listening theme"
   },
   {
     id: "kindness",
     name: "Friendliness",
     prompt: "Bring to mind a simple wish for ease and wellbeing—for yourself or another.",
-    reference: "Patañjali's Yoga Sutras, I.33; III.24"
+    reference: "Samyama In-Depth · friendliness and virtues"
   },
   {
     id: "sensation",
     name: "A gentle sensation",
     prompt: "Notice the contact of your feet, hands, or seat with support. No need to change it.",
-    reference: "Patañjali's Yoga Sutras, III.1–4"
+    reference: "Samyama on Internal Centres · sense awareness"
   },
   {
     id: "space",
-    name: "Space around you",
-    prompt: "Let attention include the room around sounds and sensations, as well as the details.",
-    reference: "Vijñāna Bhairava Tantra · space and awareness themes"
+    name: "A nearby object",
+    prompt: "Notice an ordinary object: its color, shape, and place in the room. Let seeing stay relaxed.",
+    reference: "Samyama on External Objects · adapted for safe, ordinary observation"
+  },
+  {
+    id: "pattern",
+    name: "A recurring thought",
+    prompt: "Notice a familiar thought or response as it appears. Name it gently, without judging or investigating it.",
+    reference: "Samyama on Internal Centres · mental impressions"
   }
 ];
 

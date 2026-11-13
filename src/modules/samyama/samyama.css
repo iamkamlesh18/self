@@ -260,9 +260,54 @@
   text-align: center;
 }
 
+.samyama-reference {
+  padding: clamp(18px, 3vw, 28px);
+}
+
+.samyama-reference summary {
+  color: var(--ink);
+  cursor: pointer;
+  font: 600 19px/1.35 var(--serif);
+}
+
+.samyama-reference[open] summary {
+  margin-bottom: 18px;
+}
+
+.samyama-reference-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.samyama-reference-grid article {
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--solid);
+}
+
+.samyama-reference-grid h3 {
+  margin: 0 0 8px;
+  color: var(--accent-deep);
+  font: 600 17px/1.25 var(--serif);
+}
+
+.samyama-reference-grid p,
+.samyama-reference-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.samyama-reference-note {
+  margin-top: 15px;
+}
+
 @media (min-width: 650px) {
   .samyama-focus-grid {
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .samyama-focus {
@@ -284,5 +329,9 @@
     width: 195px;
     transform: none;
     opacity: .7;
+  }
+
+  .samyama-reference-grid {
+    grid-template-columns: 1fr;
   }
 }
