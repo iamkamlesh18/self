@@ -16,8 +16,8 @@ export const HOME_PATHS = [
   { number: "06", name: "Create", detail: "Name an intention; meet it with action", tab: "affirm", set: "manifest" },
   { number: "07", name: "Ground", detail: "Explore the seven symbolic centres", tab: "chakras" },
   { number: "08", name: "Listen", detail: "Settle with nature sounds", tab: "nature" },
-  { number: "09", name: "Samyama", detail: "Hold one chosen object with all three limbs together", tab: "samyama" },
-  { number: "10", name: "Foundations", detail: "Explore preparatory focus practices and source themes", tab: "samyama-foundations" },
-  { number: "11", name: "Sadhana", detail: "Turn a personal intention into a quiet practice", tab: "samyama-sadhana" },
+  { number: "09", name: "Foundations", detail: "Explore preparatory focus practices and source themes", tab: "samyama-foundations" },
+  { number: "10", name: "Sadhana", detail: "Turn a personal intention into a quiet practice", tab: "samyama-sadhana" },
+  { number: "11", name: "Samyama", detail: "Hold one chosen object with all three limbs together", tab: "samyama" },
   { number: "12", name: "Study", detail: "Browse texts, teachers, and stories", tab: "library" }
 ];

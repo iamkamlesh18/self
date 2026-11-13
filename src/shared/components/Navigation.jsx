@@ -4,7 +4,7 @@ import { useRef } from "react";
 export const TABS = [
   ["home", "Home"], ["breathe", "Breathe"], ["sit", "Sit"], ["chakras", "Chakras"], ["affirm", "Affirm"],
   ["kriya", "Kriya"], ["advaita", "Advaita"], ["nature", "Nature"], ["tones", "Tones"],
-  ["samyama", "Samyama"], ["samyama-foundations", "Samyama Foundations"], ["samyama-sadhana", "Samyama Sadhana"],
+  ["samyama-foundations", "Samyama Foundations"], ["samyama-sadhana", "Samyama Sadhana"], ["samyama", "Samyama"],
   ["music", "Music"], ["wisdom", "Wisdom"], ["library", "Library"], ["journey", "Journey"]
 ];
 
