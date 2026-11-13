@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { SAMYAMA_DURATIONS, SAMYAMA_FOCI, SAMYAMA_STAGES } from "./data.js";
+import { SAMYAMA_DURATIONS, SAMYAMA_PATHS, SAMYAMA_STAGES } from "./data.js";
 import "./samyama.css";
 
 function readCompletions() {
@@ -17,7 +17,8 @@ function displayTime(seconds) {
 }
 
 export default function SamyamaPage() {
-  const [focusId, setFocusId] = useState(SAMYAMA_FOCI[0].id);
+  const [pathId, setPathId] = useState(SAMYAMA_PATHS[0].id);
+  const [practiceId, setPracticeId] = useState(SAMYAMA_PATHS[0].practices[0].id);
   const [minutesPerStage, setMinutesPerStage] = useState(SAMYAMA_DURATIONS[0]);
   const [stageIndex, setStageIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(SAMYAMA_DURATIONS[0] * 60);
@@ -25,7 +26,8 @@ export default function SamyamaPage() {
   const [hasStarted, setHasStarted] = useState(false);
   const [complete, setComplete] = useState(false);
   const [completions, setCompletions] = useState(readCompletions);
-  const focus = SAMYAMA_FOCI.find(item => item.id === focusId) || SAMYAMA_FOCI[0];
+  const path = SAMYAMA_PATHS.find(item => item.id === pathId) || SAMYAMA_PATHS[0];
+  const practice = path.practices.find(item => item.id === practiceId) || path.practices[0];
   const stage = SAMYAMA_STAGES[stageIndex];
 
   useEffect(() => {
@@ -63,6 +65,20 @@ export default function SamyamaPage() {
     setComplete(false);
   }
 
+  function choosePath(id) {
+    const nextPath = SAMYAMA_PATHS.find(item => item.id === id);
+    if (!nextPath) return;
+    setPathId(id);
+    setPracticeId(nextPath.practices[0].id);
+    resetPractice();
+  }
+
+  function choosePractice(id) {
+    if (running) return;
+    setPracticeId(id);
+    resetPractice();
+  }
+
   function startPractice() {
     if (complete) {
       setStageIndex(0);
@@ -90,44 +106,49 @@ export default function SamyamaPage() {
         <p className="sub">A gentle, modern introduction to concentration, meditation, and resting with experience. There is nothing to force or attain.</p>
       </div>
 
-      <details className="card samyama-reference" open>
-        <summary>How the three supplied references shape this practice</summary>
-        <div className="samyama-reference-grid">
-          <article>
-            <h3>Samyama on External Objects</h3>
-            <p>Offers themes of attention to sounds, objects, and moments. The site adapts these as relaxed listening and noticing—never sun-gazing or a promise of unusual perception.</p>
-          </article>
-          <article>
-            <h3>Samyama on Internal Centres</h3>
-            <p>Explores mind, impressions, senses, and steadiness. The practice uses these as gentle ways to notice present experience, not as diagnosis or memory recovery.</p>
-          </article>
-          <article>
-            <h3>Samyama In-Depth</h3>
-            <p>Highlights friendliness, gradual practice, and caution about attachment to attainments. These inform the kindness focus, three stages, and the reminder not to chase special results.</p>
-          </article>
+      <article className="card samyama-reference">
+        <div className="section-title">
+          <div>
+            <p className="eyebrow">PRACTICE LIBRARY · BUILT FROM YOUR THREE TEXTS</p>
+            <h2>Choose a source path</h2>
+          </div>
         </div>
-        <p className="samyama-reference-note">These are beginner-friendly adaptations of traditional commentaries by Swami Sivananda. Their spiritual and extraordinary claims are presented as traditional beliefs, not verified outcomes or promises.</p>
-      </details>
+        <div className="samyama-reference-grid">
+          {SAMYAMA_PATHS.map((item, index) => (
+            <button key={item.id} className="samyama-reference-card" type="button" aria-pressed={pathId === item.id} disabled={running} onClick={() => choosePath(item.id)}>
+              <span>TEXT 0{index + 1}</span>
+              <strong>{item.sourceTitle}</strong>
+              <small>{item.summary}</small>
+            </button>
+          ))}
+        </div>
+      </article>
 
       <article className="card samyama-card">
-        <div className="section-title"><div><p className="eyebrow">1 · CHOOSE A DOORWAY</p><h2>What would you like to notice?</h2></div></div>
-        <div className="samyama-focus-grid" role="group" aria-label="Choose a meditation focus">
-          {SAMYAMA_FOCI.map(item => (
-            <button key={item.id} className="samyama-focus" type="button" aria-pressed={focusId === item.id} disabled={running} onClick={() => setFocusId(item.id)}>
-              <span className="focus-orbit" aria-hidden="true"></span><strong>{item.name}</strong>
+        <div className="section-title">
+          <div>
+            <p className="eyebrow">1 · CHOOSE A GUIDED EXERCISE</p>
+            <h2>{path.name}: what would you like to explore?</h2>
+          </div>
+        </div>
+        <div className="samyama-focus-grid" role="group" aria-label={`Practices from ${path.sourceTitle}`}>
+          {path.practices.map(item => (
+            <button key={item.id} className="samyama-focus" type="button" aria-pressed={practiceId === item.id} disabled={running} onClick={() => choosePractice(item.id)}>
+              <span className="focus-orbit" aria-hidden="true"></span><strong>{item.name}</strong><small>{item.summary}</small>
             </button>
           ))}
         </div>
         <div className="samyama-prompt" aria-live="polite">
-          <p className="eyebrow">{focus.reference}</p>
-          <p>{focus.prompt}</p>
+          <p className="eyebrow">{path.sourceTitle} · {practice.sourceSection}</p>
+          <p>{practice.summary}</p>
         </div>
         <div className="samyama-duration">
-          <span className="eyebrow">2 · SET A COMFORTABLE PACE</span>
+          <span className="eyebrow">2 · SET A COMFORTABLE PACE · MINUTES PER STAGE</span>
           <div className="chip-row" role="group" aria-label="Minutes for each stage">
             {SAMYAMA_DURATIONS.map(value => <button key={value} className="chip" type="button" aria-pressed={minutesPerStage === value} disabled={running} onClick={() => chooseDuration(value)}>{value} min each</button>)}
           </div>
         </div>
+        <p className="samyama-reference-note">Adapted from Swami Sivananda's traditional commentary. Spiritual powers described in the sources are not promised or treated as measurable results here.</p>
       </article>
 
       <article className="card samyama-session">
@@ -140,7 +161,7 @@ export default function SamyamaPage() {
         </div>
         <div className="samyama-clock" aria-live="polite">
           <div className="samyama-clock-ring"><span>{complete ? "Complete" : running ? stage.name.split(" · ")[0] : "Ready"}</span><strong>{displayTime(secondsLeft)}</strong></div>
-          <p>{complete ? "You made space for practice. Let the next moment be ordinary." : stage.instruction}</p>
+          <p>{complete ? "You made space for practice. Let the next moment be ordinary." : practice.stages[stageIndex]}</p>
         </div>
         <div className="center-row">
           <button className="button button-primary" type="button" onClick={running ? () => setRunning(false) : startPractice}>{running ? "Pause" : complete ? "Practice again" : hasStarted ? "Continue" : "Begin gently"}</button>
@@ -149,7 +170,7 @@ export default function SamyamaPage() {
         <p className="samyama-completions">{completions} {completions === 1 ? "practice" : "practices"} completed on this device</p>
       </article>
 
-      <aside className="safety-note">The three terms describe a traditional framework in Patañjali's Yoga Sutras; teachers interpret them in different ways. This guided reflection makes no claim of samādhi, special powers, or a particular result. Keep your eyes open if that feels safer, and stop whenever you wish. The supplied commentaries also caution against making extraordinary attainments the goal.</aside>
+      <aside className="safety-note">These are original, beginner-friendly adaptations of themes in the supplied commentaries by Swami Sivananda, not a complete traditional Samyama method. Teachers interpret the texts differently. No special powers or results are promised. Keep your eyes open if that feels safer, and stop whenever you wish.</aside>
     </section>
   );
 }

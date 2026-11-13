@@ -150,7 +150,7 @@ export default function SamyamaSadhanaPage() {
           </div>
           <div className="sadhana-clock" aria-live="polite">
             <div className="sadhana-clock-ring"><span>{step === "complete" ? "Complete" : `${stage.name} · ${stage.sanskrit}`}</span><strong>{displayTime(secondsLeft)}</strong></div>
-            <p>{step === "complete" ? "Let the practice settle. Choose one small, kind action that reflects your words." : stage.instruction}</p>
+            <p>{step === "complete" ? "Let the practice settle. Choose one small, kind action that reflects your words." : selectedQuestion.stages[stageIndex]}</p>
           </div>
           {step === "practice" ? (
             <div className="center-row">

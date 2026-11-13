@@ -98,9 +98,11 @@
 
 .samyama-focus {
   position: relative;
-  display: flex;
-  min-height: 92px;
-  align-items: flex-end;
+  display: grid;
+  min-height: 132px;
+  align-content: start;
+  justify-items: start;
+  gap: 8px;
   padding: 16px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -131,6 +133,14 @@
   font: 600 23px/1.05 var(--serif);
 }
 
+.samyama-focus small {
+  position: relative;
+  z-index: 1;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
 .focus-orbit {
   position: absolute;
   top: -25px;
@@ -153,6 +163,43 @@
 .samyama-prompt > p:last-child {
   margin: 7px 0 0;
   font: 500 21px/1.35 var(--serif);
+}
+
+.samyama-reference-card {
+  display: grid;
+  min-width: 0;
+  align-content: start;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  color: var(--ink);
+  background: var(--solid);
+  text-align: left;
+  transition: border-color var(--duration-fast) ease, background var(--duration-fast) ease;
+}
+
+.samyama-reference-card:hover:not(:disabled),
+.samyama-reference-card[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.samyama-reference-card > span {
+  color: var(--accent-deep);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .12em;
+}
+
+.samyama-reference-card strong {
+  font: 600 18px/1.2 var(--serif);
+}
+
+.samyama-reference-card small {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.5;
 }
 
 .samyama-duration {
@@ -264,36 +311,12 @@
   padding: clamp(18px, 3vw, 28px);
 }
 
-.samyama-reference summary {
-  color: var(--ink);
-  cursor: pointer;
-  font: 600 19px/1.35 var(--serif);
-}
-
-.samyama-reference[open] summary {
-  margin-bottom: 18px;
-}
-
 .samyama-reference-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
-.samyama-reference-grid article {
-  padding: 15px;
-  border: 1px solid var(--line);
-  border-radius: 15px;
-  background: var(--solid);
-}
-
-.samyama-reference-grid h3 {
-  margin: 0 0 8px;
-  color: var(--accent-deep);
-  font: 600 17px/1.25 var(--serif);
-}
-
-.samyama-reference-grid p,
 .samyama-reference-note {
   margin: 0;
   color: var(--muted);
@@ -303,11 +326,12 @@
 
 .samyama-reference-note {
   margin-top: 15px;
+  font-size: 11px;
 }
 
 @media (min-width: 650px) {
   .samyama-focus-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .samyama-focus {
@@ -316,6 +340,10 @@
 }
 
 @media (max-width: 620px) {
+  .samyama-focus-grid {
+    grid-template-columns: 1fr;
+  }
+
   .samyama-hero {
     min-height: 360px;
     align-content: start;
