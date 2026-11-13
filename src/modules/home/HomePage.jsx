@@ -8,13 +8,15 @@ export default function HomePage({ minutesToday, streak, dailyThought, onPath })
         <p className="eyebrow">A GENTLE PLACE TO BEGIN</p>
         <h1>Come home to <em>yourself.</em></h1>
         <p className="sub">Make room for old patterns to soften. Create your next step from a little more peace.</p>
+        <p className="home-welcome">Nothing to prove. A soft place to begin again.</p>
         <div className="hero-glow" aria-hidden="true"><span>✳</span></div>
+        <div className="home-bloom home-bloom-hero" aria-hidden="true"><span>✿</span><i></i><i></i><i></i><i></i><i></i></div>
       </div>
       <div className="stats">
         <div className="stat"><strong>{minutesToday}</strong><span>Minutes today</span></div>
         <div className="stat"><strong>{streak}</strong><span>Day practice streak</span></div>
       </div>
-      <article className="card daily-card"><p className="eyebrow">A THOUGHT FOR THIS MOMENT</p><p className="daily-thought">{dailyThought}</p></article>
+      <article className="card daily-card"><p className="eyebrow">A THOUGHT FOR THIS MOMENT</p><p className="daily-thought">{dailyThought}</p><div className="home-bloom home-bloom-note" aria-hidden="true"><span>✿</span><i></i><i></i><i></i><i></i><i></i></div></article>
       <div className="section-title"><div><p className="eyebrow">A PATH YOU CAN TAKE IN ANY ORDER</p><h2>Choose what meets you</h2></div></div>
       <div className="path-grid">
         {HOME_PATHS.map(item => (

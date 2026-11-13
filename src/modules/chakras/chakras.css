@@ -61,6 +61,7 @@
   font-size: 10px;
   font-weight: 650;
   letter-spacing: .1em;
+  overflow-wrap: anywhere;
   text-transform: uppercase;
 }
 

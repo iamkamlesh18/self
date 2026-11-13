@@ -17,5 +17,6 @@ export const HOME_PATHS = [
   { number: "07", name: "Ground", detail: "Explore the seven symbolic centres", tab: "chakras" },
   { number: "08", name: "Listen", detail: "Settle with nature sounds", tab: "nature" },
   { number: "09", name: "Focus", detail: "Explore a three-part meditation", tab: "samyama" },
-  { number: "10", name: "Study", detail: "Browse texts, teachers, and stories", tab: "library" }
+  { number: "10", name: "Sadhana", detail: "Turn a personal intention into a quiet practice", tab: "samyama-sadhana" },
+  { number: "11", name: "Study", detail: "Browse texts, teachers, and stories", tab: "library" }
 ];

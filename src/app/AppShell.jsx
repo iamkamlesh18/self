@@ -18,6 +18,7 @@ import MusicPage from "../modules/music/MusicPage.jsx";
 import WisdomPage from "../modules/wisdom/WisdomPage.jsx";
 import LibraryPage from "../modules/library/LibraryPage.jsx";
 import SamyamaPage from "../modules/samyama/SamyamaPage.jsx";
+import SamyamaSadhanaPage from "../modules/samyama/sadhana/SamyamaSadhanaPage.jsx";
 import JourneyPage from "../modules/journey/JourneyPage.jsx";
 import "../shared/components/player.css";
 import "../shared/components/layout.css";
@@ -103,6 +104,7 @@ export default function AppShell() {
   const active = pathname.replace(/^\/+|\/+$/g, "") || "home";
   const [theme, setTheme] = useState(() => storageGet("come-home-theme", "") || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"));
   const [chimes, setChimes] = useState(() => storageGet("come-home-chimes", true));
+  const [doNotDisturb, setDoNotDisturb] = useState(() => storageGet("come-home-do-not-disturb", false));
   const [history, setHistory] = useState(() => {
     const saved = storageGet("come-home-history", { sessions: 0, days: {} });
     return saved && typeof saved === "object" && saved.days ? saved : { sessions: 0, days: {} };
@@ -191,6 +193,14 @@ export default function AppShell() {
       console.warn("Could not save come-home-chimes to local storage.", error);
     }
   }, [chimes]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("come-home-do-not-disturb", JSON.stringify(doNotDisturb));
+    } catch (error) {
+      console.warn("Could not save do-not-disturb preference to local storage.", error);
+    }
+  }, [doNotDisturb]);
 
   useEffect(() => {
     try {
@@ -293,7 +303,7 @@ export default function AppShell() {
   }, [emitAudioChange, natureVolume, speakerMode]);
 
   const playChime = useCallback((kind = "middle", duration = 1.1) => {
-    if (!chimes || audioPausedRef.current) return;
+    if (!chimes || doNotDisturb || audioPausedRef.current) return;
     const context = ensureAudio();
     const engine = engineRef.current;
     if (!context) return;
@@ -307,7 +317,7 @@ export default function AppShell() {
     gain.connect(engine.output);
     oscillator.start();
     oscillator.stop(context.currentTime + duration + .05);
-  }, [chimes, ensureAudio]);
+  }, [chimes, doNotDisturb, ensureAudio]);
 
   const sendYoutubeCommand = useCallback((command, args = []) => {
     const frame = iframeRef.current;
@@ -432,8 +442,8 @@ export default function AppShell() {
     if (/\b(inhale|breathe in|deep breath in)\b/i.test(step[0])) playChime("high", .65);
     else if (step[0].includes("Hold") || step[0].includes("Rest")) playChime("middle", .65);
     else playChime("low", .65);
-    if ("vibrate" in navigator) navigator.vibrate(24);
-  }, [breathDisplay, playChime, session]);
+    if (!doNotDisturb && "vibrate" in navigator) navigator.vibrate(24);
+  }, [breathDisplay, doNotDisturb, playChime, session]);
 
   const pauseBreathSession = useCallback(() => {
     const current = sessionRef.current;
@@ -986,7 +996,7 @@ export default function AppShell() {
       if (!message || typeof message !== "object") return;
       if (message.event === "onReady" || message.event === "infoDelivery" || message.event === "onStateChange") {
         window.clearTimeout(youtubeTimerRef.current);
-        setYoutube(current => ({ ...current, ready: true, error: "" }));
+        setYoutube(current => ({ ...current, ready: true }));
         if (youtube.wantPlay) sendYoutubeCommand("playVideo");
       }
       if (message.event === "onError" && Number(message.info) === 153) {
@@ -1111,9 +1121,10 @@ export default function AppShell() {
 
   return (
     <div className="page">
-      <Header chimes={chimes} onToggleChimes={() => setChimes(value => !value)} onToggleTheme={() => setTheme(value => value === "dark" ? "light" : "dark")} theme={theme} />
+      <Header chimes={chimes} doNotDisturb={doNotDisturb} onToggleChimes={() => setChimes(value => !value)} onToggleDoNotDisturb={() => setDoNotDisturb(value => !value)} onToggleTheme={() => setTheme(value => value === "dark" ? "light" : "dark")} theme={theme} />
       <Navigation active={active} onSelect={id => navigate(`/${id}`)} />
       <main>
+        {doNotDisturb && <p className="quiet-status" role="note">Quiet mode is on for this site. Device notifications follow your device settings.</p>}
         <Routes>
           <Route path="/" element={<HomePage minutesToday={todayMinutes} streak={streak} dailyThought={dailyThought} onPath={handlePath} />} />
           <Route path="/home" element={<HomePage minutesToday={todayMinutes} streak={streak} dailyThought={dailyThought} onPath={handlePath} />} />
@@ -1126,6 +1137,7 @@ export default function AppShell() {
           <Route path="/nature" element={<NaturePage activeSounds={activeSounds} volume={natureVolume} onToggle={toggleNature} onVolume={setNatureVolume} onStop={stopAllNature} />} />
           <Route path="/tones" element={<TonesPage speakerMode={speakerMode} tone={tone} journey={journey} toneVolume={toneVolume} onMode={changeSpeakerMode} onPlay={playSingleTone} onJourneyDuration={seconds => setJourney(current => ({ ...current, seconds }))} onJourneyToggle={toggleJourney} onVolume={setToneVolume} />} />
           <Route path="/samyama" element={<SamyamaPage />} />
+          <Route path="/samyama-sadhana" element={<SamyamaSadhanaPage />} />
           <Route path="/music" element={null} />
           <Route path="/wisdom" element={<WisdomPage />} />
           <Route path="/library" element={<LibraryPage />} />

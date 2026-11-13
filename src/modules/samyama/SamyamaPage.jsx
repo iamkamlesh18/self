@@ -22,6 +22,7 @@ export default function SamyamaPage() {
   const [stageIndex, setStageIndex] = useState(0);
   const [secondsLeft, setSecondsLeft] = useState(SAMYAMA_DURATIONS[0] * 60);
   const [running, setRunning] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const [complete, setComplete] = useState(false);
   const [completions, setCompletions] = useState(readCompletions);
   const focus = SAMYAMA_FOCI.find(item => item.id === focusId) || SAMYAMA_FOCI[0];
@@ -58,6 +59,7 @@ export default function SamyamaPage() {
     setMinutesPerStage(value);
     setSecondsLeft(value * 60);
     setStageIndex(0);
+    setHasStarted(false);
     setComplete(false);
   }
 
@@ -67,6 +69,7 @@ export default function SamyamaPage() {
       setSecondsLeft(minutesPerStage * 60);
       setComplete(false);
     }
+    setHasStarted(true);
     setRunning(true);
   }
 
@@ -74,6 +77,7 @@ export default function SamyamaPage() {
     setRunning(false);
     setStageIndex(0);
     setSecondsLeft(minutesPerStage * 60);
+    setHasStarted(false);
     setComplete(false);
   }
 
@@ -120,7 +124,7 @@ export default function SamyamaPage() {
           <p>{complete ? "You made space for practice. Let the next moment be ordinary." : stage.instruction}</p>
         </div>
         <div className="center-row">
-          <button className="button button-primary" type="button" onClick={running ? () => setRunning(false) : startPractice}>{running ? "Pause" : complete ? "Practice again" : stageIndex > 0 || secondsLeft < minutesPerStage * 60 ? "Continue" : "Begin gently"}</button>
+          <button className="button button-primary" type="button" onClick={running ? () => setRunning(false) : startPractice}>{running ? "Pause" : complete ? "Practice again" : hasStarted ? "Continue" : "Begin gently"}</button>
           <button className="button button-soft" type="button" onClick={resetPractice}>Reset</button>
         </div>
         <p className="samyama-completions">{completions} {completions === 1 ? "practice" : "practices"} completed on this device</p>

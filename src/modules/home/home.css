@@ -34,7 +34,8 @@
 
 .hero .eyebrow,
 .hero h1,
-.hero .sub {
+.hero .sub,
+.home-welcome {
   position: relative;
   z-index: 2;
 }
@@ -54,6 +55,68 @@
   max-width: 39ch;
   margin-top: 20px;
   font-size: clamp(15px, 1.3vw, 18px);
+}
+
+.home-welcome {
+  margin: 14px 0 0;
+  color: var(--accent-deep);
+  font: 500 18px/1.35 var(--serif);
+}
+
+.home-bloom {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  color: var(--accent-deep);
+  pointer-events: none;
+}
+
+.home-bloom span {
+  position: relative;
+  z-index: 1;
+  color: var(--gold);
+  font-size: 64px;
+  line-height: 1;
+  text-shadow: 0 0 24px rgba(189, 145, 92, .32);
+  animation: flower-sway 8s ease-in-out infinite;
+}
+
+.home-bloom i {
+  position: absolute;
+  width: 35%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(189, 145, 92, .38);
+  border-radius: 50%;
+}
+
+.home-bloom i:nth-of-type(1) { top: 0; left: 32%; }
+.home-bloom i:nth-of-type(2) { top: 25%; right: 0; }
+.home-bloom i:nth-of-type(3) { right: 10%; bottom: 0; }
+.home-bloom i:nth-of-type(4) { bottom: 0; left: 10%; }
+.home-bloom i:nth-of-type(5) { top: 25%; left: 0; }
+
+.home-bloom-hero {
+  z-index: 2;
+  right: 7%;
+  bottom: 7%;
+  width: 100px;
+  aspect-ratio: 1;
+}
+
+.home-bloom-note {
+  right: 20px;
+  bottom: 13px;
+  width: 60px;
+  aspect-ratio: 1;
+  opacity: .8;
+}
+
+.home-bloom-note span {
+  font-size: 42px;
+}
+
+.home-bloom-note i {
+  width: 29%;
 }
 
 .hero-glow {
@@ -102,6 +165,8 @@
 }
 
 .daily-card {
+  position: relative;
+  overflow: hidden;
   display: flex;
   min-height: 130px;
   flex-direction: column;
@@ -114,6 +179,11 @@
   max-width: 48ch;
   margin: 9px 0 0;
   font: 500 clamp(22px, 3vw, 31px)/1.22 var(--serif);
+}
+
+.daily-card > :not(.home-bloom) {
+  position: relative;
+  z-index: 1;
 }
 
 .path-grid {
@@ -220,6 +290,11 @@
     max-width: 31ch;
   }
 
+  .home-welcome {
+    max-width: 18ch;
+    font-size: 16px;
+  }
+
   .hero-glow {
     top: auto;
     right: -22px;
@@ -231,6 +306,26 @@
 
   .hero-glow span {
     font-size: 66px;
+  }
+
+  .home-bloom-hero {
+    right: 20px;
+    bottom: 8px;
+    width: 75px;
+  }
+
+  .home-bloom-hero span {
+    font-size: 49px;
+  }
+
+  .home-bloom-note {
+    right: 9px;
+    bottom: 8px;
+    width: 46px;
+  }
+
+  .home-bloom-note span {
+    font-size: 32px;
   }
 
   .path-card {
