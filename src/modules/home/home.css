@@ -1,0 +1,30 @@
+.hero { min-height:230px; padding:24px 20px; overflow:hidden; background:linear-gradient(135deg,rgba(255,255,255,.62),rgba(189,225,214,.42),rgba(222,212,237,.4)); }
+:root[data-theme="dark"] .hero { background:linear-gradient(135deg,rgba(23,55,47,.9),rgba(23,45,49,.86),rgba(45,34,57,.8)); }
+.hero h1 { max-width:300px; margin-top:13px; }
+.hero .sub { max-width:320px; }
+.hero-glow { position:absolute; right:22px; bottom:19px; width:96px; height:96px; display:grid; place-items:center; border:1px solid rgba(37,141,126,.3); border-radius:50%; color:var(--accent); box-shadow:0 0 0 12px rgba(37,141,126,.05),0 0 0 26px rgba(37,141,126,.035); animation:glow-breathe 7s ease-in-out infinite alternate; }
+.hero-glow span { font-size:27px; }
+@keyframes glow-breathe { to { transform:scale(1.09); opacity:.72; } }
+.daily-card { padding:15px 17px; }
+.daily-thought { margin:6px 0 0; font:500 20px/1.28 var(--serif); }
+.path-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.path-card { min-height:85px; display:flex; align-items:center; gap:10px; padding:11px; border:1px solid var(--line); border-radius:15px; color:var(--ink); background:var(--card); text-align:left; transition:transform .18s,border-color .18s; }
+.path-card:hover { transform:translateY(-2px); border-color:var(--accent); }
+.path-number { width:30px; height:30px; flex:0 0 auto; display:grid; place-items:center; border-radius:50%; color:var(--accent-deep); background:var(--accent-soft); font-size:10px; font-weight:700; }
+.path-card strong { display:block; font:600 19px/1 var(--serif); }
+.path-card small { display:block; margin-top:5px; color:var(--muted); font-size:9px; line-height:1.35; }
+.closing-note { margin:0; color:var(--muted); font-size:10px; line-height:1.75; }
+
+@media (min-width:560px) {
+  .hero { min-height:248px; padding:29px 25px; }
+  .hero-glow { right:30px; bottom:25px; width:112px; height:112px; }
+  .path-card { min-height:95px; padding:13px; }
+}
+@media (min-width:760px) {
+  .home-page .hero { min-height:280px; }
+  .path-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
+}
+@media (max-width:370px) {
+  .path-card { min-height:80px; gap:7px; padding:9px; }
+  .path-card small { font-size:8px; }
+}

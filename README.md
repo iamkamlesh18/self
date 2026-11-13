@@ -1,38 +1,39 @@
-Be concise. Prioritize output over explanation.
+# Come Home
 
-- For coding tasks, give the working code first. Then add at most 3 short bullets on key decisions or caveats.
-- Do not restate my question or summarize the task.
-- Do not add greetings, praise, or closing offers.
-- Give one solution. Mention an alternative only if the first has a real limitation.
-- For edits, show only the changed functions or lines with file and location, not the entire file.
-- Comment only non-obvious logic. No docstrings unless I ask.
-- Do only what I asked. Suggest extras (tests, refactors, edge cases) in one line at the end.
-- Explain theory or reasoning only when I ask "why" or "explain."
-- If my request is ambiguous, ask one clarifying question instead of guessing at length.
+A React and Vite practice site for breathing, sitting, reflection, sound, Samyama, and a curated spiritual-reading library. It is a static frontend: practice progress and preferences stay in the visitor's browser.
 
-## Project instructions
+## Create a React/Vite project
 
-- Read this file before each project task and follow it as the primary project guide.
-- Keep practice copy and reusable reference-derived content in `content.js`, page structure in `index.html`, styling in `styles.css`, and behavior in `app.js`.
-- Treat files in `refer data/` as temporary source material: review them, integrate only useful details in original wording, then remove consumed files while keeping the folder (tracked with `.gitkeep`).
-- Preserve spiritual context. Mark traditional or modern frequency claims as beliefs or associations; do not promise health, financial, or supernatural results or reproduce long copyrighted passages.
-- Keep tools, dependencies, and explanations lean. Run `node --check app.js` and the available site checks before a requested push.
-- Make thoughtful improvements that fit the brief without unrelated scope changes.
+These are the exact commands for creating the same JavaScript project from scratch:
 
-## Site
+```sh
+npm create vite@latest come-home -- --template react
+cd come-home
+npm install
+npm install react-router-dom
+npm run dev
+```
 
-Come Home is a React application built with Vite. Start it locally with:
+In this existing repository, install and run it with:
 
 ```sh
 npm install
 npm run dev
+npm run build
 ```
 
-Vite prints the local URL in the terminal. Create a production build with `npm run build`; the output is written to `dist/`.
+Vite prints the local development URL. The production build is written to `dist/`.
 
-- `src/components/` contains the reusable header, navigation, footer, and practice sections.
-- `src/data.js` contains practice copy and reference-derived data.
-- `src/index.css` preserves the responsive theme and motion.
-- `src/App.jsx` manages interaction, sessions, saved progress, and audio behavior.
-- `vite.config.js` sets the GitHub Pages base path to `/self/`.
-- `.github/workflows/deploy.yml` installs dependencies, builds the app, and publishes `dist/` to GitHub Pages after pushes to `main`. Set the repository's Pages source to **GitHub Actions** if it is not already enabled.
+## Project map
+
+- `src/App.jsx` mounts the app with `HashRouter` so every page works after a GitHub Pages refresh.
+- `src/app/AppShell.jsx` owns shared practice, preference, timer, and audio state; shared playback stays mounted between routes.
+- `src/modules/<page>/` keeps each page's component and its own content data together. Samyama and the reading library also have matching stylesheets.
+- `src/shared/components/` contains the header, navigation, footer, and reusable phrase and wisdom views.
+- `src/index.css` contains the shared theme, responsive layout, and reduced-motion behavior.
+- `public/` is for static assets. Vite's `base` is `/self/` for the current GitHub Pages repository.
+- `.github/workflows/deploy.yml` is already configured to build and publish `dist/` on pushes to `main`; leave it unchanged.
+
+## Reference material
+
+Treat files in `refer data/` as temporary source material. Integrate useful ideas in original wording, keep source references, and avoid reproducing long copyrighted passages. Present spiritual and frequency claims as traditional beliefs or modern associations, not proven outcomes. Do not promise health, financial, or supernatural results. Once reviewed and integrated, remove the consumed files while preserving `.gitkeep`.

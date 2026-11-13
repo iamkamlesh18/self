@@ -1,0 +1,9 @@
+.sound-card { padding:18px; }
+.sound-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+.sound-button { min-height:63px; display:flex; align-items:center; gap:9px; padding:9px 10px; border:1px solid var(--line); border-radius:12px; color:var(--ink); background:rgba(255,255,255,.18); text-align:left; }
+.sound-button[aria-pressed="true"] { border-color:var(--accent); background:var(--accent-soft); }
+.sound-icon { width:31px; height:31px; flex:0 0 auto; display:grid; place-items:center; border-radius:50%; background:var(--accent-soft); font-size:15px; }
+.sound-button strong { display:block; font-size:10px; }
+.sound-button small { display:block; margin-top:2px; color:var(--muted); font-size:8px; }
+@media (min-width:560px) { .sound-card { padding:20px; } }
+@media (max-width:370px) { .sound-card { padding:14px; } }

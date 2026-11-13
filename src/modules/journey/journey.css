@@ -1,0 +1,5 @@
+.journey-card { padding:17px; }
+.journey-card h2 { margin:14px 0 8px; font-size:22px; }
+.history-list { display:grid; gap:6px; margin-bottom:16px; }
+.history-row { display:flex; justify-content:space-between; gap:10px; padding:9px 11px; border:1px solid var(--line); border-radius:9px; color:var(--muted); font-size:10px; }
+.history-row strong { color:var(--ink); font-weight:600; }

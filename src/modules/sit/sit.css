@@ -1,0 +1,7 @@
+.sit-card { padding-top:20px; }
+.sit-orb-wrap { position:relative; width:min(76vw,290px); aspect-ratio:1; margin:17px auto 7px; display:grid; place-items:center; }
+.sit-orb { position:absolute; width:70%; aspect-ratio:1; border-radius:50%; background:radial-gradient(circle at 34% 30%,#c2eadb,var(--accent-deep)); box-shadow:0 0 58px 12px rgba(42,149,130,.18); transform:scale(.85); }
+.sit-clock { position:relative; display:grid; justify-items:center; color:white; text-shadow:0 1px 8px rgba(0,0,0,.4); }
+.sit-clock span { font-size:13px; font-weight:600; }
+.sit-clock strong { margin:2px 0; font-size:40px; font-weight:350; line-height:1.1; font-variant-numeric:tabular-nums; }
+.sit-clock small { color:rgba(255,255,255,.82); font-size:9px; }

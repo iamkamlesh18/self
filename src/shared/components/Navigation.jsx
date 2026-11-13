@@ -1,10 +1,11 @@
+import { NavLink } from "react-router-dom";
+import { useRef } from "react";
+
 export const TABS = [
   ["home", "Home"], ["breathe", "Breathe"], ["sit", "Sit"], ["chakras", "Chakras"], ["affirm", "Affirm"],
   ["kriya", "Kriya"], ["advaita", "Advaita"], ["nature", "Nature"], ["tones", "Tones"],
-  ["music", "Music"], ["wisdom", "Wisdom"], ["journey", "Journey"]
+  ["samyama", "Samyama"], ["music", "Music"], ["wisdom", "Wisdom"], ["library", "Library"], ["journey", "Journey"]
 ];
-
-import { useRef } from "react";
 
 export default function Navigation({ active, onSelect }) {
   const buttonRefs = useRef([]);
@@ -23,21 +24,17 @@ export default function Navigation({ active, onSelect }) {
   }
 
   return (
-    <nav className="tabs" role="tablist" aria-label="Practice sections">
+    <nav className="tabs" aria-label="Practice sections">
       {TABS.map(([id, label], index) => (
-        <button
+        <NavLink
           key={id}
           ref={element => { buttonRefs.current[index] = element; }}
-          id={`tab-${id}`}
-          className="tab"
-          type="button"
-          role="tab"
-          aria-controls={`t-${id}`}
-          aria-selected={active === id}
-          tabIndex={active === id ? 0 : -1}
-          onClick={() => onSelect(id)}
+          to={`/${id}`}
+          end
+          className={`tab${active === id ? " is-active" : ""}`}
+          aria-current={active === id ? "page" : undefined}
           onKeyDown={event => handleKeyDown(event, index)}
-        >{label}</button>
+        >{label}</NavLink>
       ))}
     </nav>
   );
