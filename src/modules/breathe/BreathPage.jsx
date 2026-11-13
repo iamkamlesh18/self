@@ -1,7 +1,7 @@
 import { BREATH_PATTERNS } from "./data.js";
 import "./breathe.css";
 
-export default function BreathPage({ patternId, session, elapsed, breathDisplay, onChoosePattern, onToggle, onReset }) {
+export default function BreathPage({ patternId, session, elapsed, breathDisplay, breathSoundEnabled, onToggleBreathSound, onChoosePattern, onToggle, onReset }) {
   const selected = BREATH_PATTERNS.find(item => item.id === patternId) || BREATH_PATTERNS[0];
   const running = session?.kind === "breathe" && session.running;
   const phase = session?.kind === "breathe" ? breathDisplay.phase : "Ready";
@@ -25,6 +25,14 @@ export default function BreathPage({ patternId, session, elapsed, breathDisplay,
         </div>
         <div className="session-stats"><div><strong>{session?.kind === "breathe" ? breathDisplay.rounds : "0"}</strong><span>Rounds</span></div><div><strong>{session?.kind === "breathe" ? elapsed : "0:00"}</strong><span>Time</span></div></div>
         <div className="breath-actions">
+          {selected.sound && (
+            <div className="breath-sound-control">
+              <span>{selected.sound === "bhramari" ? "Soft humming tone" : "Soft synthesized Om tone"} · local sound, no YouTube</span>
+              <button className="button button-soft" type="button" aria-pressed={breathSoundEnabled} onClick={onToggleBreathSound}>
+                Sound {breathSoundEnabled ? "on" : "off"}
+              </button>
+            </div>
+          )}
           <div className="center-row"><button className="button button-primary" type="button" onClick={onToggle}>{running ? "Pause" : session?.kind === "breathe" ? "Resume" : "Start"}</button><button className="button button-soft" type="button" onClick={onReset}>Reset</button></div>
           <p className="safety-note">{["bellows", "pumps"].includes(patternId) ? selected.note : "If you feel light-headed, anxious, or uncomfortable, stop and breathe naturally."}</p>
         </div>

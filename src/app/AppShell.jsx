@@ -27,6 +27,7 @@ import "../shared/components/layout.css";
 
 const GROUPS = ["affirm", "kriya", "advaita"];
 const SAMYAMA_BREATH_PATTERNS = new Set(["calm", "long-exhale"]);
+const LOCAL_BREATH_SOUND_PATTERNS = new Set(["bhramari", "om"]);
 const DEFAULT_YOUTUBE_URL = "https://youtu.be/9THx_-Y1YJg";
 
 function storageGet(key, fallback) {
@@ -58,6 +59,46 @@ function streakDays(days) {
 function formatTime(seconds) {
   const value = Math.max(0, Math.floor(seconds));
   return `${Math.floor(value / 60)}:${String(value % 60).padStart(2, "0")}`;
+}
+
+function startLocalBreathTone(context, output, patternId, phase) {
+  if (patternId === "bhramari" && !phase.startsWith("Hum")) return null;
+
+  const master = context.createGain();
+  const filter = context.createBiquadFilter();
+  filter.type = "lowpass";
+  filter.frequency.value = patternId === "om"
+    ? phase.includes("A") ? 800 : phase.includes("U") ? 420 : 230
+    : 700;
+  master.gain.setValueAtTime(.0001, context.currentTime);
+  master.gain.linearRampToValueAtTime(.045, context.currentTime + .12);
+  filter.connect(master);
+  master.connect(output);
+
+  const frequencies = patternId === "om" ? [110, 220, 330] : [174, 261];
+  const oscillators = frequencies.map((frequency, index) => {
+    const oscillator = context.createOscillator();
+    const partialGain = context.createGain();
+    oscillator.type = "triangle";
+    oscillator.frequency.value = frequency;
+    partialGain.gain.value = index === 0 ? 1 : patternId === "om" ? .2 / index : .12 / index;
+    oscillator.connect(partialGain);
+    partialGain.connect(filter);
+    oscillator.start();
+    return oscillator;
+  });
+
+  return () => {
+    const endTime = context.currentTime + .12;
+    master.gain.cancelScheduledValues(context.currentTime);
+    master.gain.setTargetAtTime(.0001, context.currentTime, .035);
+    oscillators.forEach(oscillator => oscillator.stop(endTime));
+    window.setTimeout(() => {
+      oscillators.forEach(oscillator => oscillator.disconnect());
+      filter.disconnect();
+      master.disconnect();
+    }, 250);
+  };
 }
 
 function defaultPhrases() {
@@ -124,6 +165,7 @@ export default function AppShell() {
   const [intentionInput, setIntentionInput] = useState("");
   const [intentionHelp, setIntentionHelp] = useState("");
   const [session, setSession] = useState(null);
+  const [breathSoundEnabled, setBreathSoundEnabled] = useState(true);
   const [backgroundBreathUntil, setBackgroundBreathUntil] = useState(null);
   const [now, setNow] = useState(() => performance.now());
   const [natureVolume, setNatureVolume] = useState(35);
@@ -437,15 +479,23 @@ export default function AppShell() {
       return { phase: "Ready", count: selected.steps[0][1] >= 1 ? selected.steps[0][1] : "—", pump: "", rounds: "0", scale: selected.steps[0][2] };
     }
     const pattern = DATA.breathPatterns.find(item => item.id === session.pattern) || DATA.breathPatterns[0];
-    const cycleLength = pattern.steps.reduce((sum, step) => sum + step[1], 0);
-    const cycleTime = elapsedSeconds % cycleLength;
+    const alternateDuration = session.pattern === "alternate"
+      ? elapsedSeconds < 120 ? 4 : elapsedSeconds < 240 ? 5 : 6
+      : null;
+    const steps = alternateDuration
+      ? pattern.steps.map(step => [step[0], alternateDuration, step[2], step[3], step[4]])
+      : pattern.steps;
+    const cycleLength = steps.reduce((sum, step) => sum + step[1], 0);
+    const cycleTime = session.pattern === "alternate"
+      ? (elapsedSeconds % 120) % cycleLength
+      : elapsedSeconds % cycleLength;
     let stepIndex = 0;
     let stepStart = 0;
-    while (stepIndex < pattern.steps.length - 1 && cycleTime >= stepStart + pattern.steps[stepIndex][1]) {
-      stepStart += pattern.steps[stepIndex][1];
+    while (stepIndex < steps.length - 1 && cycleTime >= stepStart + steps[stepIndex][1]) {
+      stepStart += steps[stepIndex][1];
       stepIndex += 1;
     }
-    const step = pattern.steps[stepIndex];
+    const step = steps[stepIndex];
     const withinStep = Math.max(0, cycleTime - stepStart);
     const progress = Math.min(1, withinStep / step[1]);
     const eased = .5 - .5 * Math.cos(Math.PI * progress);
@@ -454,10 +504,20 @@ export default function AppShell() {
       count: step[1] < 1 ? "Breathe" : String(Math.max(1, Math.ceil(step[1] - withinStep))),
       pump: step[4] ? session.pattern === "bellows" ? `Breath ${step[4]} of 20` : `Pump ${step[4]} of 30` : "",
       rounds: String(Math.floor(elapsedSeconds / cycleLength)),
+      ...(alternateDuration ? { pump: `Gentle rhythm · ${alternateDuration}s in and out` } : {}),
       scale: (step[2] + (step[3] - step[2]) * eased).toFixed(5),
       stepIndex
     };
   }, [elapsedSeconds, patternId, session]);
+
+  useEffect(() => {
+    if (!breathSoundEnabled || session?.kind !== "breathe" || !session.running) return undefined;
+    const pattern = DATA.breathPatterns.find(item => item.id === session.pattern);
+    if (!pattern?.sound) return undefined;
+    const context = ensureAudio();
+    if (!context) return undefined;
+    return startLocalBreathTone(context, engineRef.current.output, pattern.sound, breathDisplay.phase);
+  }, [breathDisplay.phase, breathDisplay.stepIndex, breathSoundEnabled, ensureAudio, session]);
 
   useEffect(() => {
     if (session?.kind !== "breathe" || !session.running || breathDisplay.stepIndex === undefined || breathDisplay.stepIndex === previousBreathStepRef.current) return;
@@ -495,17 +555,22 @@ export default function AppShell() {
       return;
     }
     if (current) finishSessionRef.current(false);
+    const usesLocalBreathSound = kind === "breathe" && LOCAL_BREATH_SOUND_PATTERNS.has(patternId);
+    if (usesLocalBreathSound) {
+      setYoutube(state => ({ ...state, wantPlay: false }));
+      sendYoutubeCommand("pauseVideo");
+    }
     const next = {
       id: ++practiceSessionSequenceRef.current,
       kind, running: true, elapsed: 0, startedAt: performance.now(),
       duration: kind === "sit" ? sitMinutes * 60 : Infinity,
-      pattern: patternId, musicLinked: withSessions
+      pattern: patternId, musicLinked: usesLocalBreathSound ? false : withSessions
     };
     setSession(next);
     ensureAudio();
     if (kind === "sit") playChime("middle", 2);
     if (next.musicLinked) playYoutube();
-  }, [ensureAudio, patternId, pauseBreathSession, pauseYoutube, playChime, playYoutube, sitMinutes, withSessions]);
+  }, [ensureAudio, patternId, pauseBreathSession, pauseYoutube, playChime, playYoutube, sendYoutubeCommand, sitMinutes, withSessions]);
 
   const resetSession = useCallback(kind => {
     if (sessionRef.current?.kind === kind) finishSessionRef.current(false);
@@ -960,10 +1025,11 @@ export default function AppShell() {
     window.clearTimeout(journeyTimerRef.current);
     setJourney(current => ({ ...current, active: false }));
     removeTone();
+    setBreathSoundEnabled(false);
     setYoutube(current => ({ ...current, wantPlay: false }));
     sendYoutubeCommand("pauseVideo");
     emitAudioChange();
-  }, [emitAudioChange, removeTone, sendYoutubeCommand, stopAllNature]);
+  }, [emitAudioChange, removeTone, sendYoutubeCommand, setBreathSoundEnabled, stopAllNature]);
 
   const handleYoutubeLoad = useCallback(() => {
     const parsed = validYoutubeAddress(youtubeUrl.trim());
@@ -1062,11 +1128,12 @@ export default function AppShell() {
 
   useEffect(() => {
     if (!session) return;
-    if (!withSessions && session.musicLinked) {
+    const usesLocalBreathSound = session.kind === "breathe" && LOCAL_BREATH_SOUND_PATTERNS.has(session.pattern);
+    if ((!withSessions || usesLocalBreathSound) && session.musicLinked) {
       setSession(current => current ? { ...current, musicLinked: false } : current);
       setYoutube(current => ({ ...current, wantPlay: false }));
       sendYoutubeCommand("pauseVideo");
-    } else if (withSessions && !session.musicLinked) {
+    } else if (withSessions && !usesLocalBreathSound && !session.musicLinked) {
       setSession(current => current ? { ...current, musicLinked: true } : current);
       if (session.running) playYoutube();
     }
@@ -1121,12 +1188,15 @@ export default function AppShell() {
   const audioItems = [
     ...(tone ? [tone.label] : []),
     ...activeSounds.map(id => DATA.natureSounds.find(sound => sound.id === id)?.name || id),
+    ...(breathSoundEnabled && session?.kind === "breathe" && session.running && LOCAL_BREATH_SOUND_PATTERNS.has(session.pattern)
+      ? [session.pattern === "bhramari" ? "Bhramari hum" : "Om tone"]
+      : []),
     ...(youtube.playing || youtube.wantPlay ? ["YouTube"] : [])
   ];
-  const hasAudio = useMemo(() => audioItems.length > 0, [audioVersion, activeSounds, tone, youtube.playing, youtube.wantPlay]);
+  const hasAudio = useMemo(() => audioItems.length > 0, [audioVersion, activeSounds, breathSoundEnabled, session, tone, youtube.playing, youtube.wantPlay]);
   const audioIsPaused = useMemo(() => audioPaused || Boolean(engineRef.current.context && engineRef.current.context.state !== "running"), [audioPaused, audioVersion]);
   const youtubeActive = youtube.playing || youtube.wantPlay;
-  const localAudioActive = Boolean(tone || activeSounds.length || journey.active);
+  const localAudioActive = Boolean(tone || activeSounds.length || journey.active || (breathSoundEnabled && session?.kind === "breathe" && session.running && LOCAL_BREATH_SOUND_PATTERNS.has(session.pattern)));
   const backgroundBreathSeconds = backgroundBreathUntil === null
     ? 60
     : Math.min(60, Math.max(0, Math.ceil((backgroundBreathUntil - now) / 1000)));
@@ -1153,7 +1223,7 @@ export default function AppShell() {
         <Routes>
           <Route path="/" element={<HomePage minutesToday={todayMinutes} streak={streak} dailyThought={dailyThought} onPath={handlePath} />} />
           <Route path="/home" element={<HomePage minutesToday={todayMinutes} streak={streak} dailyThought={dailyThought} onPath={handlePath} />} />
-          <Route path="/breathe" element={<BreathPage patternId={patternId} session={session} elapsed={formattedElapsed} breathDisplay={breathDisplay} onChoosePattern={setBreathPattern} onToggle={() => toggleSession("breathe")} onReset={() => resetSession("breathe")} />} />
+          <Route path="/breathe" element={<BreathPage patternId={patternId} session={session} elapsed={formattedElapsed} breathDisplay={breathDisplay} breathSoundEnabled={breathSoundEnabled} onToggleBreathSound={() => setBreathSoundEnabled(value => !value)} onChoosePattern={setBreathPattern} onToggle={() => toggleSession("breathe")} onReset={() => resetSession("breathe")} />} />
           <Route path="/sit" element={<SitPage minutes={sitMinutes} session={session} elapsed={formattedElapsed} remaining={sitRemaining} scale={sitScale} onChoose={chooseSitDuration} onToggle={() => toggleSession("sit")} onReset={() => resetSession("sit")} />} />
           <Route path="/chakras" element={<ChakrasPage index={chakraIndex} onChoose={setChakraIndex} onMove={amount => setChakraIndex(value => (value + amount + DATA.chakras.length) % DATA.chakras.length)} />} />
           <Route path="/affirm" element={<AffirmPage phrase={phrases.affirm} intentions={intentions} input={intentionInput} help={intentionHelp} inputRef={intentionInputRef} onInput={value => { setIntentionInput(value); setIntentionHelp(""); }} onAdd={addIntention} onRemove={index => setIntentions(value => value.filter((_, itemIndex) => itemIndex !== index))} onMove={changePhrase} onAuto={togglePhraseAuto} onSpeak={toggleReadPhrase} onChoose={choosePhraseSet} />} />

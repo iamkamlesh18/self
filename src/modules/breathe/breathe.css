@@ -139,6 +139,31 @@
   text-align: center;
 }
 
+.breath-sound-control {
+  display: flex;
+  width: min(100%, 460px);
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--solid);
+}
+
+.breath-sound-control span {
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.breath-sound-control .button {
+  flex: 0 0 auto;
+  min-height: 38px;
+  padding: 8px 13px;
+  font-size: 11px;
+}
+
 @media (max-width: 520px) {
   .breath-actions {
     gap: 14px;
@@ -147,6 +172,10 @@
 
   .breath-actions .center-row {
     gap: 8px;
+  }
+
+  .breath-sound-control {
+    align-items: flex-start;
   }
 
   .breath-actions .safety-note {

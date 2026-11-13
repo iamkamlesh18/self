@@ -28,6 +28,7 @@ Vite prints the local development URL. The production build is written to `dist/
 
 - `src/App.jsx` mounts the app with `HashRouter` so every page works after a GitHub Pages refresh.
 - `src/app/AppShell.jsx` owns shared practice, preference, timer, and audio state; YouTube can be paused independently, and a running breathing practice continues for one minute after leaving its page, then pauses.
+- `src/modules/breathe/data.js` defines gentle breath patterns, including gradually lengthening alternate-nostril pacing, mindful and belly awareness, Ujjayi-inspired throat breathing, Shitali, Bhramari, and Om. Bhramari and Om use optional local synthesized tones and never auto-start YouTube.
 - `src/modules/<page>/` keeps each page's component, visual styles, and content data together.
 - `src/shared/components/` contains the header, navigation, footer, reusable phrase and wisdom views, and the persistent cross-page audio/practice dock.
 - The header's chime control enables gentle breathing-phase and sitting-practice sounds. Do Not Disturb quiets this site's practice sounds and haptic cues; browser and device notifications must be managed in device settings.
