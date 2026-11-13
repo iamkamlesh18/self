@@ -21,8 +21,10 @@ export default function BreathPage({ patternId, session, elapsed, breathDisplay,
           <div className="breath-center"><span>{phase}</span><strong>{count}</strong><small>{session?.kind === "breathe" ? breathDisplay.pump : ""}</small></div>
         </div>
         <div className="session-stats"><div><strong>{session?.kind === "breathe" ? breathDisplay.rounds : "0"}</strong><span>Rounds</span></div><div><strong>{session?.kind === "breathe" ? elapsed : "0:00"}</strong><span>Time</span></div></div>
-        <div className="center-row"><button className="button button-primary" type="button" onClick={onToggle}>{running ? "Pause" : session?.kind === "breathe" ? "Resume" : "Start"}</button><button className="button button-soft" type="button" onClick={onReset}>Reset</button></div>
-        <p className="safety-note">{["bellows", "pumps"].includes(patternId) ? selected.note : "If you feel light-headed, anxious, or uncomfortable, stop and breathe naturally."}</p>
+        <div className="breath-actions">
+          <div className="center-row"><button className="button button-primary" type="button" onClick={onToggle}>{running ? "Pause" : session?.kind === "breathe" ? "Resume" : "Start"}</button><button className="button button-soft" type="button" onClick={onReset}>Reset</button></div>
+          <p className="safety-note">{["bellows", "pumps"].includes(patternId) ? selected.note : "If you feel light-headed, anxious, or uncomfortable, stop and breathe naturally."}</p>
+        </div>
       </div>
     </section>
   );
