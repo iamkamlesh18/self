@@ -3,6 +3,7 @@ import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-
 import Header from "../shared/components/Header.jsx";
 import Navigation, { TABS } from "../shared/components/Navigation.jsx";
 import Footer from "../shared/components/Footer.jsx";
+import PersistentPlayer from "../shared/components/PersistentPlayer.jsx";
 import { DATA } from "../data.js";
 import HomePage from "../modules/home/HomePage.jsx";
 import BreathPage from "../modules/breathe/BreathPage.jsx";
@@ -118,6 +119,7 @@ export default function AppShell() {
   const [intentionInput, setIntentionInput] = useState("");
   const [intentionHelp, setIntentionHelp] = useState("");
   const [session, setSession] = useState(null);
+  const [backgroundBreathUntil, setBackgroundBreathUntil] = useState(null);
   const [now, setNow] = useState(() => performance.now());
   const [natureVolume, setNatureVolume] = useState(35);
   const [toneVolume, setToneVolume] = useState(35);
@@ -127,6 +129,10 @@ export default function AppShell() {
   const [journey, setJourney] = useState({ active: false, index: 0, seconds: 20 });
   const [audioPaused, setAudioPaused] = useState(false);
   const [audioVersion, setAudioVersion] = useState(0);
+  const [youtubeVolume, setYoutubeVolume] = useState(() => {
+    const saved = storageGet("come-home-youtube-volume", 60);
+    return Number.isFinite(saved) ? Math.min(100, Math.max(0, saved)) : 60;
+  });
   const [youtubeUrl, setYoutubeUrl] = useState(DEFAULT_YOUTUBE_URL);
   const [youtube, setYoutube] = useState({
     video: "9THx_-Y1YJg", playlist: "", host: "https://www.youtube-nocookie.com",
@@ -202,6 +208,14 @@ export default function AppShell() {
       console.warn("Could not save come-home-intentions to local storage.", error);
     }
   }, [intentions]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("come-home-youtube-volume", JSON.stringify(youtubeVolume));
+    } catch (error) {
+      console.warn("Could not save YouTube volume to local storage.", error);
+    }
+  }, [youtubeVolume]);
 
   useEffect(() => {
     const date = new Intl.DateTimeFormat(undefined, { weekday: "long", month: "long", day: "numeric" }).format(new Date());
@@ -296,14 +310,23 @@ export default function AppShell() {
     oscillator.stop(context.currentTime + duration + .05);
   }, [chimes, ensureAudio]);
 
-  const sendYoutubeCommand = useCallback(command => {
+  const sendYoutubeCommand = useCallback((command, args = []) => {
     const frame = iframeRef.current;
     if (!frame?.contentWindow || !frame.src) return;
     try {
-      frame.contentWindow.postMessage(JSON.stringify({ event: "command", func: command, args: [] }), new URL(frame.src).origin);
+      frame.contentWindow.postMessage(JSON.stringify({ event: "command", func: command, args }), new URL(frame.src).origin);
     } catch (error) {
       console.warn(`Could not send YouTube ${command} command.`, error);
     }
+  }, []);
+
+  const changeYoutubeVolume = useCallback(value => {
+    const volume = Math.min(100, Math.max(0, Math.round(Number(value) || 0)));
+    setYoutubeVolume(volume);
+  }, []);
+
+  const stepYoutubeVolume = useCallback(amount => {
+    setYoutubeVolume(current => Math.min(100, Math.max(0, current + amount)));
   }, []);
 
   const loadYoutube = useCallback((details, autoplay = false) => {
@@ -408,13 +431,24 @@ export default function AppShell() {
     if ("vibrate" in navigator) navigator.vibrate(24);
   }, [breathDisplay, playChime, session]);
 
+  const pauseBreathSession = useCallback(() => {
+    const current = sessionRef.current;
+    if (current?.kind !== "breathe" || !current.running) return;
+    const elapsed = current.elapsed + (performance.now() - current.startedAt) / 1000;
+    setSession({ ...current, running: false, elapsed });
+    if (current.musicLinked) pauseYoutube();
+  }, [pauseYoutube]);
+
   const toggleSession = useCallback(kind => {
     const current = sessionRef.current;
     if (current?.kind === kind) {
       if (current.running) {
-        const elapsed = current.elapsed + (performance.now() - current.startedAt) / 1000;
-        setSession({ ...current, running: false, elapsed });
-        if (current.musicLinked) pauseYoutube();
+        if (kind === "breathe") pauseBreathSession();
+        else {
+          const elapsed = current.elapsed + (performance.now() - current.startedAt) / 1000;
+          setSession({ ...current, running: false, elapsed });
+          if (current.musicLinked) pauseYoutube();
+        }
       } else {
         ensureAudio();
         setSession({ ...current, running: true, startedAt: performance.now() });
@@ -432,11 +466,25 @@ export default function AppShell() {
     ensureAudio();
     if (kind === "sit") playChime("middle", 2);
     if (next.musicLinked) playYoutube();
-  }, [ensureAudio, patternId, pauseYoutube, playChime, playYoutube, sitMinutes, withSessions]);
+  }, [ensureAudio, patternId, pauseBreathSession, pauseYoutube, playChime, playYoutube, sitMinutes, withSessions]);
 
   const resetSession = useCallback(kind => {
     if (sessionRef.current?.kind === kind) finishSessionRef.current(false);
   }, []);
+
+  const breathingAway = session?.kind === "breathe" && active !== "breathe";
+
+  useEffect(() => {
+    if (!breathingAway || !session?.running) {
+      setBackgroundBreathUntil(null);
+      return undefined;
+    }
+
+    const deadline = performance.now() + 60_000;
+    setBackgroundBreathUntil(deadline);
+    const timer = window.setTimeout(pauseBreathSession, 60_000);
+    return () => window.clearTimeout(timer);
+  }, [breathingAway, pauseBreathSession, session?.running]);
 
   const phraseLines = useCallback((group, phrase = phrases[group]) => {
     const base = DATA.phraseSets[phrase.set]?.lines || [];
@@ -931,6 +979,10 @@ export default function AppShell() {
   }, [youtube.src]);
 
   useEffect(() => {
+    if (youtube.ready) sendYoutubeCommand("setVolume", [youtubeVolume]);
+  }, [sendYoutubeCommand, youtube.ready, youtubeVolume]);
+
+  useEffect(() => {
     const onMessage = event => {
       if (event.source !== iframeRef.current?.contentWindow) return;
       let originHost;
@@ -1045,6 +1097,10 @@ export default function AppShell() {
   ];
   const hasAudio = useMemo(() => audioItems.length > 0, [audioVersion, activeSounds, tone, youtube.playing, youtube.wantPlay]);
   const audioIsPaused = useMemo(() => audioPaused || Boolean(engineRef.current.context && engineRef.current.context.state !== "running"), [audioPaused, audioVersion]);
+  const youtubeActive = youtube.playing || youtube.wantPlay || youtubeWasPlayingRef.current;
+  const backgroundBreathSeconds = backgroundBreathUntil === null
+    ? 60
+    : Math.min(60, Math.max(0, Math.ceil((backgroundBreathUntil - now) / 1000)));
 
   function handlePath(item) {
     if (item.set) choosePhraseSet(item.tab, item.set);
@@ -1082,15 +1138,26 @@ export default function AppShell() {
           <Route path="/journey" element={<JourneyPage history={history} streak={streak} onClear={handleClearHistory} />} />
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
-        <MusicPage active={active} url={youtubeUrl} externalUrl={externalYoutubeUrl} iframeRef={iframeRef} src={musicSrc} withSessions={withSessions} error={youtube.error} onUrl={setYoutubeUrl} onLoad={handleYoutubeLoad} onWithSessions={setWithSessions} />
+        <MusicPage active={active} url={youtubeUrl} externalUrl={externalYoutubeUrl} iframeRef={iframeRef} src={musicSrc} withSessions={withSessions} error={youtube.error} playing={youtube.playing || youtube.wantPlay} volume={youtubeVolume} onUrl={setYoutubeUrl} onLoad={handleYoutubeLoad} onWithSessions={setWithSessions} onTogglePlayback={() => youtube.playing || youtube.wantPlay ? pauseYoutube() : playYoutube()} onVolumeChange={changeYoutubeVolume} onVolumeStep={stepYoutubeVolume} />
       </main>
       <Footer />
-      {hasAudio && <div className="mini-player" aria-live="polite">
-        <span className="mini-pulse" aria-hidden="true"></span>
-        <span className="mini-label">{audioItems.join(" · ") || "Audio paused"}</span>
-        <button type="button" aria-label={audioIsPaused ? "Resume all audio" : "Pause all audio"} onClick={toggleAllAudio}>{audioIsPaused ? "▶" : "Ⅱ"}</button>
-        <button type="button" aria-label="Stop all audio" onClick={stopAllAudio}>×</button>
-      </div>}
+      <PersistentPlayer
+        audioItems={audioItems}
+        hasAudio={hasAudio}
+        audioIsPaused={audioIsPaused}
+        onToggleAudio={toggleAllAudio}
+        onStopAudio={stopAllAudio}
+        youtubeActive={youtubeActive}
+        youtubeVolume={youtubeVolume}
+        onYoutubeVolumeStep={stepYoutubeVolume}
+        breathSession={breathingAway ? session : null}
+        breathDisplay={breathDisplay}
+        elapsed={formattedElapsed}
+        awaySeconds={backgroundBreathSeconds}
+        onToggleBreath={() => toggleSession("breathe")}
+        onResetBreath={() => resetSession("breathe")}
+        onOpenBreath={() => navigate("/breathe")}
+      />
       <audio id="audioOutput" ref={audioOutputRef} autoPlay playsInline aria-hidden="true" tabIndex={-1} />
     </div>
   );

@@ -1,21 +1,50 @@
 .mini-player {
   position: fixed;
   z-index: 60;
-  bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   left: 50%;
-  display: flex;
-  width: min(560px, calc(100vw - 24px));
-  min-height: 62px;
-  align-items: center;
-  gap: 12px;
-  padding: 8px 10px 8px 18px;
+  display: grid;
+  width: min(560px, calc(100vw - 20px));
+  gap: 7px;
+  padding: 9px;
   transform: translateX(-50%);
   border: 1px solid var(--line);
   border-radius: 22px;
   background: var(--solid);
+  background: color-mix(in srgb, var(--solid) 92%, transparent);
   box-shadow: 0 15px 55px rgba(20, 32, 25, .2);
   -webkit-backdrop-filter: blur(20px);
   backdrop-filter: blur(20px);
+  animation: dock-arrive 420ms var(--ease-soft) both;
+}
+
+.mini-audio,
+.mini-breath {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+}
+
+.mini-breath {
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--line);
+}
+
+.mini-breath-copy {
+  display: grid;
+  min-width: 0;
+  flex: 1;
+  gap: 1px;
+}
+
+.mini-breath-copy small {
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .mini-pulse {
@@ -38,29 +67,56 @@
   white-space: nowrap;
 }
 
-.mini-player button {
+.mini-player button,
+.mini-volume button {
   display: grid;
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   flex: 0 0 auto;
   place-items: center;
   border: 0;
-  border-radius: 15px;
+  border-radius: 14px;
   color: var(--on-accent);
   background: var(--accent-deep);
   font-size: 15px;
-  transition: transform var(--duration-fast) var(--ease-soft);
+  transition:
+    transform var(--duration-fast) var(--ease-soft),
+    background var(--duration-fast) ease;
 }
 
-.mini-player button:hover {
+.mini-player button:hover:not(:disabled),
+.mini-volume button:hover:not(:disabled) {
   transform: scale(1.05);
 }
 
-.mini-player button:last-child {
-  width: 36px;
+.mini-player button.mini-secondary {
   color: var(--muted);
   background: transparent;
   font-size: 20px;
+}
+
+.mini-volume {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 3px;
+}
+
+.mini-volume button {
+  width: 33px;
+  height: 36px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--card);
+  font-size: 19px;
+}
+
+.mini-volume button:disabled {
+  opacity: .42;
+}
+
+.page:has(.mini-player) {
+  padding-bottom: 70px;
 }
 
 #audioOutput {
@@ -90,4 +146,41 @@
   width: 100%;
   opacity: 1;
   pointer-events: auto;
+}
+
+@media (max-width: 520px) {
+  .mini-player {
+    gap: 5px;
+    padding: 7px;
+    border-radius: 19px;
+  }
+
+  .mini-breath {
+    gap: 6px;
+    padding-bottom: 5px;
+  }
+
+  .mini-audio {
+    gap: 6px;
+  }
+
+  .mini-breath button,
+  .mini-audio > button {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+  }
+
+  .mini-volume {
+    gap: 2px;
+  }
+
+  .mini-volume button {
+    width: 30px;
+    height: 34px;
+  }
+
+  .mini-label {
+    font-size: 11px;
+  }
 }

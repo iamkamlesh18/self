@@ -3,18 +3,101 @@
 }
 
 .video-frame {
+  position: relative;
+  isolation: isolate;
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border: 1px solid var(--line);
   border-radius: 21px;
   background: #101714;
   box-shadow: var(--shadow-card);
+  transition: box-shadow var(--duration-medium) ease, border-color var(--duration-medium) ease;
 }
 
 .video-frame iframe {
+  position: relative;
+  z-index: 0;
   width: 100%;
   height: 100%;
   border: 0;
+}
+
+.video-frame::after {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  border: 1px solid transparent;
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.video-frame.is-playing {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 5px rgba(114, 151, 123, .08), 0 18px 48px rgba(37, 64, 46, .18);
+}
+
+.video-frame.is-playing::after {
+  border-color: rgba(215, 233, 201, .38);
+  animation: music-breathe 5s ease-in-out infinite;
+}
+
+.youtube-controls {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.youtube-play {
+  min-width: 108px;
+  min-height: 42px;
+  padding: 9px 16px;
+  font-size: 12px;
+}
+
+.youtube-volume {
+  display: grid;
+  grid-template-columns: 38px auto minmax(60px, 1fr) 42px 38px;
+  align-items: center;
+  gap: 8px;
+}
+
+.youtube-volume button {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  color: var(--ink);
+  background: var(--solid);
+  font-size: 19px;
+  transition: transform var(--duration-fast) var(--ease-soft), border-color var(--duration-fast) ease;
+}
+
+.youtube-volume button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+.youtube-volume button:disabled {
+  opacity: .42;
+}
+
+.youtube-volume label,
+.youtube-volume output {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.youtube-volume input {
+  width: 100%;
+  accent-color: var(--accent-deep);
+}
+
+.youtube-volume output {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 .music-card > label {
@@ -51,4 +134,25 @@
   min-height: 42px;
   padding: 9px 14px;
   font-size: 12px;
+}
+
+@media (max-width: 600px) {
+  .youtube-controls {
+    grid-template-columns: 1fr;
+    gap: 11px;
+  }
+
+  .youtube-play {
+    width: 100%;
+  }
+
+  .youtube-volume {
+    grid-template-columns: 36px auto minmax(48px, 1fr) 38px 36px;
+    gap: 6px;
+  }
+
+  .youtube-volume button {
+    width: 36px;
+    height: 38px;
+  }
 }
