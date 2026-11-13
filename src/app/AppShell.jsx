@@ -18,6 +18,7 @@ import MusicPage from "../modules/music/MusicPage.jsx";
 import WisdomPage from "../modules/wisdom/WisdomPage.jsx";
 import LibraryPage from "../modules/library/LibraryPage.jsx";
 import SamyamaPage from "../modules/samyama/SamyamaPage.jsx";
+import SamyamaFoundationsPage from "../modules/samyama/SamyamaFoundationsPage.jsx";
 import SamyamaSadhanaPage from "../modules/samyama/sadhana/SamyamaSadhanaPage.jsx";
 import JourneyPage from "../modules/journey/JourneyPage.jsx";
 import "../shared/components/player.css";
@@ -1137,6 +1138,7 @@ export default function AppShell() {
           <Route path="/nature" element={<NaturePage activeSounds={activeSounds} volume={natureVolume} onToggle={toggleNature} onVolume={setNatureVolume} onStop={stopAllNature} />} />
           <Route path="/tones" element={<TonesPage speakerMode={speakerMode} tone={tone} journey={journey} toneVolume={toneVolume} onMode={changeSpeakerMode} onPlay={playSingleTone} onJourneyDuration={seconds => setJourney(current => ({ ...current, seconds }))} onJourneyToggle={toggleJourney} onVolume={setToneVolume} />} />
           <Route path="/samyama" element={<SamyamaPage />} />
+          <Route path="/samyama-foundations" element={<SamyamaFoundationsPage />} />
           <Route path="/samyama-sadhana" element={<SamyamaSadhanaPage />} />
           <Route path="/music" element={null} />
           <Route path="/wisdom" element={<WisdomPage />} />

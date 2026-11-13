@@ -89,7 +89,7 @@ export default function SamyamaSadhanaPage() {
         <div className="sadhana-flower" aria-hidden="true"><span>✿</span><i></i><i></i><i></i><i></i><i></i></div>
         <p className="eyebrow">SAMYAMA SADHANA · A PRACTICE FOR YOUR INTENTION</p>
         <h1>Begin with what <em>matters.</em></h1>
-        <p className="sub">Ask yourself a gentle question. Find your own words, then let a few quiet minutes of practice return you to them.</p>
+        <p className="sub">Ask yourself a gentle question. Find your own words, then let a few quiet minutes of reflection return you to them. This intention Sadhana is separate from integrated Samyama.</p>
         <p className="sadhana-reference-preview">Drawn from your three references: outer attention · inner noticing · friendliness and gradual practice.</p>
       </div>
 
@@ -144,12 +144,12 @@ export default function SamyamaSadhanaPage() {
           <div className="sadhana-stage-list" aria-label="Sadhana stages">
             {SADHANA_STAGES.map((item, index) => (
               <div className={`sadhana-stage${stageIndex === index && step !== "complete" ? " current" : ""}${step === "complete" || stageIndex > index ? " passed" : ""}`} key={item.name}>
-                <span>{String(index + 1).padStart(2, "0")}</span><strong>{item.name}</strong><small>{item.sanskrit}</small>
+                <span>{String(index + 1).padStart(2, "0")}</span><strong>{item.name}</strong><small>{item.subtitle}</small>
               </div>
             ))}
           </div>
           <div className="sadhana-clock" aria-live="polite">
-            <div className="sadhana-clock-ring"><span>{step === "complete" ? "Complete" : `${stage.name} · ${stage.sanskrit}`}</span><strong>{displayTime(secondsLeft)}</strong></div>
+            <div className="sadhana-clock-ring"><span>{step === "complete" ? "Complete" : stage.name}</span><strong>{displayTime(secondsLeft)}</strong></div>
             <p>{step === "complete" ? "Let the practice settle. Choose one small, kind action that reflects your words." : selectedQuestion.stages[stageIndex]}</p>
           </div>
           {step === "practice" ? (

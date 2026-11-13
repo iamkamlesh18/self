@@ -4,7 +4,8 @@ import { useRef } from "react";
 export const TABS = [
   ["home", "Home"], ["breathe", "Breathe"], ["sit", "Sit"], ["chakras", "Chakras"], ["affirm", "Affirm"],
   ["kriya", "Kriya"], ["advaita", "Advaita"], ["nature", "Nature"], ["tones", "Tones"],
-  ["samyama", "Samyama"], ["samyama-sadhana", "Samyama Sadhana"], ["music", "Music"], ["wisdom", "Wisdom"], ["library", "Library"], ["journey", "Journey"]
+  ["samyama", "Samyama"], ["samyama-foundations", "Samyama Foundations"], ["samyama-sadhana", "Samyama Sadhana"],
+  ["music", "Music"], ["wisdom", "Wisdom"], ["library", "Library"], ["journey", "Journey"]
 ];
 
 export default function Navigation({ active, onSelect }) {

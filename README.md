@@ -31,7 +31,8 @@ Vite prints the local development URL. The production build is written to `dist/
 - `src/modules/<page>/` keeps each page's component, visual styles, and content data together.
 - `src/shared/components/` contains the header, navigation, footer, reusable phrase and wisdom views, and the persistent cross-page audio/practice dock.
 - The header's chime control enables gentle breathing-phase and sitting-practice sounds. Do Not Disturb quiets this site's practice sounds and haptic cues; browser and device notifications must be managed in device settings.
-- `src/modules/samyama/sadhana/` is a separate, private-by-default question → personal words → three-stage practice flow. Its prompts adapt themes from the supplied External Objects, Internal Centres, and In-Depth commentaries; the reflection itself is not saved, and only completed practice counts are stored locally.
+- `src/modules/samyama/` contains the unified Samyama practice: choose one object from the supplied commentaries and hold dhāraṇā, dhyāna, and samādhi together throughout one session. `SamyamaFoundationsPage.jsx` keeps the separate preparatory exercises.
+- `src/modules/samyama/sadhana/` is a separate, private-by-default intention reflection. Its prompts adapt themes from the supplied commentaries; the reflection itself is not saved, and only completed practice counts are stored locally.
 - `src/theme/tokens.css` is the separate light/dark palette and design-token file; edit it to restyle the whole site without changing page content.
 - `src/theme/motion.css` contains shared animations and reduced-motion behavior, separate from the theme palette.
 - `src/index.css` contains shared typography, surfaces, and responsive foundations. Component and page styles live beside their components.

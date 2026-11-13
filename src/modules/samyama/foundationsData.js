@@ -147,9 +147,9 @@ export const SAMYAMA_PATHS = [
 ];
 
 export const SAMYAMA_STAGES = [
-  { name: "Dhāraṇā · gather" },
-  { name: "Dhyāna · stay" },
-  { name: "Samādhi · release" }
+  { name: "Settle · choose a focus" },
+  { name: "Stay · sustain attention" },
+  { name: "Release · finish gently" }
 ];
 
 export const SAMYAMA_DURATIONS = [1, 2, 3];
