@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { SAMYAMA_DURATIONS, SAMYAMA_PATHS, SAMYAMA_STAGES } from "./foundationsData.js";
+import { SAMYAMA_LIMBS, SAMYAMA_SOURCES, SAMYAMA_TOPICS } from "./traditionalData.js";
 import "./foundations.css";
 
 function readCompletions() {
@@ -26,9 +27,11 @@ export default function SamyamaFoundationsPage() {
   const [hasStarted, setHasStarted] = useState(false);
   const [complete, setComplete] = useState(false);
   const [completions, setCompletions] = useState(readCompletions);
+  const [studyTopicId, setStudyTopicId] = useState(SAMYAMA_TOPICS[0].id);
   const path = SAMYAMA_PATHS.find(item => item.id === pathId) || SAMYAMA_PATHS[0];
   const practice = path.practices.find(item => item.id === practiceId) || path.practices[0];
   const stage = SAMYAMA_STAGES[stageIndex];
+  const studyTopic = SAMYAMA_TOPICS.find(item => item.id === studyTopicId) || SAMYAMA_TOPICS[0];
 
   useEffect(() => {
     if (!running) return undefined;
@@ -168,6 +171,48 @@ export default function SamyamaFoundationsPage() {
           <button className="button button-soft" type="button" onClick={resetPractice}>Reset</button>
         </div>
         <p className="samyama-completions">{completions} {completions === 1 ? "practice" : "practices"} completed on this device</p>
+      </article>
+
+      <article className="card samyama-reference samyama-source-study">
+        <div className="section-title">
+          <div>
+            <p className="eyebrow">STUDY · THE THREE SOURCE COLLECTIONS</p>
+            <h2>Explore the traditional focus topics</h2>
+          </div>
+        </div>
+        <label className="samyama-study-select" htmlFor="foundationSourceTopic">Choose a source topic
+          <select id="foundationSourceTopic" value={studyTopicId} onChange={event => setStudyTopicId(event.target.value)}>
+            {SAMYAMA_SOURCES.map(source => (
+              <optgroup key={source.id} label={source.title}>
+                {source.topics.map(item => <option key={item.id} value={item.id}>{item.name}</option>)}
+              </optgroup>
+            ))}
+          </select>
+        </label>
+        <div className="samyama-source-entry" aria-live="polite">
+          <p className="eyebrow">{studyTopic.sourceTitle} · {studyTopic.section}</p>
+          <h3>{studyTopic.name}</h3>
+          <p><strong>Traditional account:</strong> {studyTopic.traditionalClaim}</p>
+          <p><strong>Reflective focus:</strong> {studyTopic.focus}</p>
+          {studyTopic.caution && <p className="samyama-source-caution" role="note">{studyTopic.caution}</p>}
+        </div>
+        <p className="samyama-reference-note">These are source-attributed traditional claims, not verified outcomes. Use the practical, symbolic focus; never attempt risky bodily or supernatural tests.</p>
+      </article>
+
+      <article className="card samyama-reference samyama-integrated-teaching">
+        <p className="eyebrow">PRACTICE SAMYAMA · PATAÑJALI'S YOGA SUTRAS III.1–4</p>
+        <h2>Keep all three limbs with this one object</h2>
+        <p className="samyama-teaching-time">3:00 · a short guided example</p>
+        <p>These are not three timed stages. Keep the same object and let all three aspects work together for the entire session.</p>
+        <div className="samyama-teaching-limbs">
+          {SAMYAMA_LIMBS.map(item => (
+            <section className="samyama-teaching-limb" key={item.name}>
+              <h3>{item.name}</h3>
+              <p>{item.description}</p>
+            </section>
+          ))}
+        </div>
+        <p className="samyama-reference-note">Before formal Samyama, complete the breathing and sitting preparation in the Samyama tab. The short interval there is a gentle cue to bring the object to mind, then release it into stillness.</p>
       </article>
 
       <aside className="safety-note">These are preparatory exercises, not the unified Samyama described by Patañjali. Traditional commentaries make spiritual claims that are not presented as verified outcomes here. Keep your eyes open if that feels safer, and stop whenever you wish.</aside>

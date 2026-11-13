@@ -48,6 +48,23 @@
   line-height: 1.5;
 }
 
+.sadhana-samyama-prep {
+  padding: 17px 20px;
+  border: 1px solid var(--line);
+  border-left: 2px solid var(--gold);
+  border-radius: 2px 17px 17px 2px;
+  background: var(--card);
+  box-shadow: var(--shadow-card);
+}
+
+.sadhana-samyama-prep > p:last-child {
+  max-width: 85ch;
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
 .sadhana-flower {
   position: absolute;
   top: 50%;

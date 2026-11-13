@@ -17,7 +17,7 @@ export const SAMYAMA_SOURCES = [
         "Sun and the worlds",
         "External Objects · On the Sun",
         "The commentary says Samyama on the Sun brings knowledge of the worlds. It describes seven higher lokas—Bhu, Bhuvar, Swar, Mahar, Jana, Tapo, Satya—and seven lower lokas—Sutala, Vitala, Talatala, Mahatala, Rasatala, Atala, Patala.",
-        "Use the word 'Sun' or a symbolic image as the single object; contemplate the traditional cosmology without looking at the Sun.",
+        "Use a remembered or pictured Sun as the single object. Notice its light, warmth, and steady radiance as contemplative qualities; do not look directly at the Sun.",
         "Never stare at the Sun. This is a traditional claim, not a promise of cosmic knowledge."
       ),
       topic(
@@ -395,7 +395,6 @@ export const SAMYAMA_SOURCES = [
     ]
   }
 ];
-
 export const SAMYAMA_TOPICS = SAMYAMA_SOURCES.flatMap(source =>
   source.topics.map(item => ({ ...item, sourceTitle: source.title, sourceId: source.id }))
 );
@@ -414,5 +413,3 @@ export const SAMYAMA_LIMBS = [
     description: "Let the object fill awareness as far as it naturally can; do not force blankness or claim an attainment."
   }
 ];
-
-export const SAMYAMA_DURATIONS = [3, 5, 10, 15];

@@ -186,3 +186,213 @@
     grid-template-columns: 1fr;
   }
 }
+
+.integrated-samyama-prep-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.integrated-samyama-prep-heading h2 {
+  margin: 7px 0 0;
+  font: 600 clamp(22px, 3vw, 29px)/1.2 var(--serif);
+}
+
+.integrated-samyama-ready {
+  flex: 0 0 auto;
+  padding: 8px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--muted);
+  background: var(--solid);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.integrated-samyama-ready.is-ready,
+.integrated-samyama-done {
+  color: var(--accent-deep);
+}
+
+.integrated-samyama-prep-list {
+  display: grid;
+  gap: 10px;
+}
+
+.integrated-samyama-prep-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) minmax(150px, 190px);
+  align-items: center;
+  gap: 15px;
+  padding: 17px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--solid);
+}
+
+.integrated-samyama-prep-row.is-complete {
+  border-color: var(--accent);
+  background: linear-gradient(110deg, var(--solid), var(--accent-soft));
+}
+
+.integrated-samyama-prep-status {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.integrated-samyama-prep-row.is-complete .integrated-samyama-prep-status {
+  color: var(--on-accent);
+  background: var(--accent-deep);
+}
+
+.integrated-samyama-prep-copy h3 {
+  margin: 0;
+  color: var(--ink);
+  font: 600 19px/1.25 var(--serif);
+}
+
+.integrated-samyama-prep-copy > p {
+  max-width: 70ch;
+  margin: 6px 0 10px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.integrated-samyama-prep-action {
+  display: grid;
+  justify-items: center;
+  gap: 7px;
+  text-align: center;
+}
+
+.integrated-samyama-prep-action .button {
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  font-size: 11px;
+}
+
+.integrated-samyama-prep-time {
+  color: var(--accent-deep);
+  font-size: 28px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 450;
+}
+
+.integrated-samyama-breath-cue {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.integrated-samyama-done {
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.integrated-samyama-prep-footnote {
+  margin: 13px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.integrated-samyama-reset-prep {
+  display: flex;
+  min-height: 36px;
+  margin: 12px auto 0;
+  padding: 7px 12px;
+  font-size: 11px;
+}
+
+.integrated-samyama-object.is-sun-focus {
+  display: grid;
+  grid-template-columns: minmax(130px, 220px) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(18px, 4vw, 36px);
+}
+
+.integrated-samyama-sun {
+  min-width: 0;
+  margin: 0;
+}
+
+.integrated-samyama-sun img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(189, 145, 92, .35);
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 0 0 8px rgba(189, 145, 92, .08), 0 14px 36px rgba(72, 49, 25, .16);
+}
+
+.integrated-samyama-sun figcaption {
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.4;
+  text-align: center;
+}
+
+.integrated-samyama-focus {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.integrated-samyama-session.is-locked {
+  border-color: rgba(114, 151, 123, .34);
+}
+
+.integrated-samyama-gate {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 620px) {
+  .integrated-samyama-prep-heading {
+    display: grid;
+  }
+
+  .integrated-samyama-prep-row {
+    grid-template-columns: 32px minmax(0, 1fr);
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .integrated-samyama-prep-copy {
+    grid-column: 2;
+  }
+
+  .integrated-samyama-prep-action {
+    grid-column: 2;
+    justify-items: stretch;
+  }
+
+  .integrated-samyama-prep-action .button {
+    width: auto;
+  }
+
+  .integrated-samyama-object.is-sun-focus {
+    grid-template-columns: 1fr;
+  }
+
+  .integrated-samyama-sun {
+    width: min(62vw, 220px);
+    margin: 0 auto;
+  }
+}

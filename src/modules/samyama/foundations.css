@@ -363,3 +363,104 @@
     grid-template-columns: 1fr;
   }
 }
+
+.samyama-study-select {
+  display: grid;
+  max-width: 720px;
+  gap: 9px;
+  margin: 16px 0 0;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.samyama-study-select select {
+  width: 100%;
+  min-height: 50px;
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-control);
+  color: var(--ink);
+  background: var(--solid);
+  font: 500 14px/1.4 var(--sans);
+}
+
+.samyama-source-entry {
+  margin-top: 19px;
+  padding: clamp(16px, 3vw, 23px);
+  border-left: 2px solid var(--gold);
+  border-radius: 2px 17px 17px 2px;
+  background: rgba(189, 145, 92, .075);
+}
+
+.samyama-source-entry h3 {
+  margin: 7px 0 12px;
+  font: 600 clamp(21px, 3vw, 28px)/1.2 var(--serif);
+}
+
+.samyama-source-entry p:not(.eyebrow),
+.samyama-integrated-teaching > p:not(.eyebrow) {
+  margin: 9px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.samyama-source-entry strong {
+  color: var(--accent-deep);
+}
+
+.samyama-source-entry .samyama-source-caution {
+  padding: 10px 12px;
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--accent-soft);
+  font-size: 11px;
+}
+
+.samyama-integrated-teaching h2 {
+  margin: 7px 0 0;
+  font: 600 clamp(22px, 3vw, 30px)/1.2 var(--serif);
+}
+
+.samyama-integrated-teaching .samyama-teaching-time {
+  color: var(--accent-deep);
+  font-weight: 650;
+}
+
+.samyama-teaching-limbs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 11px;
+  margin-top: 17px;
+}
+
+.samyama-teaching-limb {
+  padding: 15px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--solid);
+}
+
+.samyama-teaching-limb h3 {
+  margin: 0 0 8px;
+  color: var(--accent-deep);
+  font: 600 17px/1.25 var(--serif);
+}
+
+.samyama-teaching-limb p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.samyama-integrated-teaching .samyama-reference-note {
+  margin-top: 17px;
+}
+
+@media (max-width: 620px) {
+  .samyama-teaching-limbs {
+    grid-template-columns: 1fr;
+  }
+}
