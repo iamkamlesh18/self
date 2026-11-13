@@ -16,6 +16,9 @@ export default function BreathPage({ patternId, session, elapsed, breathDisplay,
           {BREATH_PATTERNS.map(pattern => <button key={pattern.id} type="button" className={`chip${patternId === pattern.id ? " selected" : ""}`} aria-pressed={patternId === pattern.id} onClick={() => onChoosePattern(pattern.id)}>{pattern.name}</button>)}
         </div>
         <p className="practice-note">{selected.note}</p>
+        {["calm", "long-exhale"].includes(patternId) && (
+          <p className="practice-note">To prepare for Samyama, complete at least five minutes of this gentle 4:4 or 4:6 rhythm, then complete a seated 5–10 minute Sit practice. The Samyama checklist updates automatically; readiness lasts one hour and resets when you leave the site.</p>
+        )}
         <div className="breath-stage">
           <div className="breath-halo"></div><div className="breath-orb" style={{ transform: `scale(${breathDisplay.scale})` }}></div>
           <div className="breath-center"><span>{phase}</span><strong>{count}</strong><small>{session?.kind === "breathe" ? breathDisplay.pump : ""}</small></div>

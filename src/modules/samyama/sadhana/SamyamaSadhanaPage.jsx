@@ -95,7 +95,7 @@ export default function SamyamaSadhanaPage() {
 
       <aside className="sadhana-samyama-prep">
         <p className="eyebrow">BEFORE FORMAL SAMYAMA</p>
-        <p>Prepare with at least 5 minutes of gentle 4:4 or 4:6 breathing (no holds or forcing), then sit quietly for 5–10 minutes in a comfortable chair or Sukhasana. Keep the breath natural and close your eyes only if comfortable. The Samyama tab guides these steps; they are preparation for Samyama, not a requirement for this intention Sadhana.</p>
+        <p>Prepare with at least 5 minutes of gentle 4:4 or 4:6 breathing (no holds or forcing), then sit quietly for 5–10 minutes in a comfortable chair or Sukhasana. Keep the breath natural and close your eyes only if comfortable. The Samyama tab guides these steps; readiness lasts one hour after both are complete and clears when you leave the site. This is preparation for Samyama, not a requirement for this intention Sadhana.</p>
       </aside>
 
       {step === "question" && (

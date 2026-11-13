@@ -20,11 +20,13 @@ import LibraryPage from "../modules/library/LibraryPage.jsx";
 import SamyamaPage from "../modules/samyama/SamyamaPage.jsx";
 import SamyamaFoundationsPage from "../modules/samyama/SamyamaFoundationsPage.jsx";
 import SamyamaSadhanaPage from "../modules/samyama/sadhana/SamyamaSadhanaPage.jsx";
+import { clearSamyamaPreparation, recordSamyamaPreparation } from "../modules/samyama/preparation.js";
 import JourneyPage from "../modules/journey/JourneyPage.jsx";
 import "../shared/components/player.css";
 import "../shared/components/layout.css";
 
 const GROUPS = ["affirm", "kriya", "advaita"];
+const SAMYAMA_BREATH_PATTERNS = new Set(["calm", "long-exhale"]);
 const DEFAULT_YOUTUBE_URL = "https://youtu.be/9THx_-Y1YJg";
 
 function storageGet(key, fallback) {
@@ -159,6 +161,8 @@ export default function AppShell() {
   });
   const sessionRef = useRef(session);
   sessionRef.current = session;
+  const practiceSessionSequenceRef = useRef(0);
+  const completedBreathSessionsRef = useRef(new Set());
   const historyRef = useRef(history);
   historyRef.current = history;
   audioPausedRef.current = audioPaused;
@@ -177,6 +181,12 @@ export default function AppShell() {
     const label = TABS.find(([id]) => id === active)?.[1] || "Home";
     document.title = `Come Home · ${label}`;
   }, [active]);
+
+  useEffect(() => {
+    const clearPreparationOnLeave = () => clearSamyamaPreparation();
+    window.addEventListener("pagehide", clearPreparationOnLeave);
+    return () => window.removeEventListener("pagehide", clearPreparationOnLeave);
+  }, []);
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
@@ -363,10 +373,19 @@ export default function AppShell() {
     else playYoutube();
   }, [pauseYoutube, playYoutube, youtube.playing, youtube.wantPlay]);
 
+  const recordBreathPreparation = useCallback((current, elapsed) => {
+    if (current.kind !== "breathe" || !SAMYAMA_BREATH_PATTERNS.has(current.pattern) || elapsed < 5 * 60) return;
+    if (completedBreathSessionsRef.current.has(current.id)) return;
+    completedBreathSessionsRef.current.add(current.id);
+    recordSamyamaPreparation("breathing");
+  }, []);
+
   const finishSession = useCallback((completed = false) => {
     const current = sessionRef.current;
     if (!current) return;
     const elapsed = completed ? current.duration : current.elapsed + (current.running ? (performance.now() - current.startedAt) / 1000 : 0);
+    recordBreathPreparation(current, elapsed);
+    if (completed && current.kind === "sit" && current.duration >= 5 * 60) recordSamyamaPreparation("sitting");
     setSession(null);
     if (elapsed >= 1) {
       const amount = Math.max(0, Math.floor(elapsed));
@@ -387,10 +406,14 @@ export default function AppShell() {
     if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     previousBreathStepRef.current = -1;
     emitAudioChange();
-  }, [emitAudioChange, playChime, sendYoutubeCommand]);
+  }, [emitAudioChange, playChime, recordBreathPreparation, sendYoutubeCommand]);
 
   const finishSessionRef = useRef(finishSession);
   finishSessionRef.current = finishSession;
+
+  useEffect(() => {
+    if (session?.kind === "breathe") recordBreathPreparation(session, elapsedSeconds);
+  }, [elapsedSeconds, recordBreathPreparation, session]);
 
   useEffect(() => {
     if (session?.kind === "sit" && session.running && elapsedSeconds >= session.duration) finishSessionRef.current(true);
@@ -473,6 +496,7 @@ export default function AppShell() {
     }
     if (current) finishSessionRef.current(false);
     const next = {
+      id: ++practiceSessionSequenceRef.current,
       kind, running: true, elapsed: 0, startedAt: performance.now(),
       duration: kind === "sit" ? sitMinutes * 60 : Infinity,
       pattern: patternId, musicLinked: withSessions

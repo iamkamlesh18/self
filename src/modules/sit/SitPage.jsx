@@ -14,6 +14,7 @@ export default function SitPage({ minutes, session, elapsed, remaining, scale, o
         <div className="sit-orb-wrap"><div className="sit-orb" style={{ transform: `scale(${session?.kind === "sit" ? scale : ".85"})` }}></div><div className="sit-clock"><span>{session?.kind === "sit" ? "Just sit" : "Ready"}</span><strong>{remaining}</strong><small>{session?.kind === "sit" ? `${elapsed} elapsed · be here as you are` : "A quiet moment is waiting"}</small></div></div>
         <div className="center-row"><button className="button button-primary" type="button" onClick={onToggle}>{running ? "Pause" : session?.kind === "sit" ? "Resume sitting" : "Begin sitting"}</button><button className="button button-soft" type="button" onClick={onReset}>Reset</button></div>
         <p className="practice-note">A soft bell marks the beginning and the end. Let your posture be comfortable, and your breath unforced.</p>
+        <p className="practice-note">After a 5-minute 4:4 or 4:6 breathing session, completing this 5-minute-or-longer sit marks the second Samyama preparation step. Samyama readiness lasts one hour and resets when you leave the site.</p>
       </div>
     </section>
   );

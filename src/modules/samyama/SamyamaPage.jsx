@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
 import { SAMYAMA_SOURCES, SAMYAMA_TOPICS } from "./traditionalData.js";
+import {
+  clearSamyamaPreparation,
+  readSamyamaPreparation,
+  recordSamyamaPreparation,
+  SAMYAMA_PREPARATION_EVENT
+} from "./preparation.js";
 import "./samyama.css";
 
 const COMPLETIONS_KEY = "come-home-integrated-samyama-completions";
-const PREPARATION_KEY = "come-home-samyama-preparation";
 const FOCUS_INTERVALS = [15, 30, 60];
 
 function readCompletions() {
@@ -13,16 +18,6 @@ function readCompletions() {
   } catch (error) {
     console.warn("Could not read Samyama progress from local storage.", error);
     return 0;
-  }
-}
-
-function readPreparation() {
-  try {
-    const saved = JSON.parse(localStorage.getItem(PREPARATION_KEY) || "{}");
-    return { breathing: saved.breathing === true, sitting: saved.sitting === true };
-  } catch (error) {
-    console.warn("Could not read Samyama preparation from local storage.", error);
-    return { breathing: false, sitting: false };
   }
 }
 
@@ -38,7 +33,8 @@ export default function SamyamaPage() {
   const [running, setRunning] = useState(false);
   const [completedIntervals, setCompletedIntervals] = useState(0);
   const [completions, setCompletions] = useState(readCompletions);
-  const [preparation, setPreparation] = useState(readPreparation);
+  const [preparation, setPreparation] = useState(readSamyamaPreparation);
+  const [clockNow, setClockNow] = useState(Date.now);
   const [breathPattern, setBreathPattern] = useState("4:4");
   const [sittingMinutes, setSittingMinutes] = useState(5);
   const [activePreparation, setActivePreparation] = useState(null);
@@ -46,7 +42,7 @@ export default function SamyamaPage() {
   const [preparationSecondsLeft, setPreparationSecondsLeft] = useState(0);
   const [preparationDuration, setPreparationDuration] = useState(0);
   const topic = SAMYAMA_TOPICS.find(item => item.id === topicId) || SAMYAMA_TOPICS[0];
-  const isReady = preparation.breathing && preparation.sitting;
+  const isReady = preparation.breathing && preparation.sitting && clockNow < preparation.readyUntil;
   const isSunFocus = topic.id === "sun";
 
   useEffect(() => {
@@ -58,7 +54,7 @@ export default function SamyamaPage() {
   useEffect(() => {
     if (!preparationRunning || preparationSecondsLeft > 0 || !activePreparation) return;
     setPreparationRunning(false);
-    setPreparation(value => ({ ...value, [activePreparation]: true }));
+    setPreparation(recordSamyamaPreparation(activePreparation));
     setActivePreparation(null);
   }, [activePreparation, preparationRunning, preparationSecondsLeft]);
 
@@ -84,12 +80,26 @@ export default function SamyamaPage() {
   }, [completions]);
 
   useEffect(() => {
-    try {
-      localStorage.setItem(PREPARATION_KEY, JSON.stringify(preparation));
-    } catch (error) {
-      console.warn("Could not save Samyama preparation to local storage.", error);
-    }
-  }, [preparation]);
+    const refreshPreparation = () => {
+      setPreparation(readSamyamaPreparation());
+      setClockNow(Date.now());
+    };
+    window.addEventListener(SAMYAMA_PREPARATION_EVENT, refreshPreparation);
+    window.addEventListener("pageshow", refreshPreparation);
+    return () => {
+      window.removeEventListener(SAMYAMA_PREPARATION_EVENT, refreshPreparation);
+      window.removeEventListener("pageshow", refreshPreparation);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!preparation.readyUntil) return undefined;
+    const timer = window.setInterval(() => {
+      setPreparation(readSamyamaPreparation());
+      setClockNow(Date.now());
+    }, 1000);
+    return () => window.clearInterval(timer);
+  }, [preparation.readyUntil]);
 
   function startPreparation(type, seconds) {
     if (preparation[type] || activePreparation !== null) return;
@@ -109,7 +119,8 @@ export default function SamyamaPage() {
 
   function resetPreparation() {
     stopPreparation();
-    setPreparation({ breathing: false, sitting: false });
+    clearSamyamaPreparation();
+    setPreparation(readSamyamaPreparation());
   }
 
   function chooseTopic(id) {
@@ -202,6 +213,16 @@ export default function SamyamaPage() {
             <div className="integrated-samyama-prep-action">
               {preparation.breathing ? <strong className="integrated-samyama-done">Done</strong> : activePreparation === "breathing" ? (
                 <>
+                  <div className="integrated-samyama-prep-animation" aria-hidden="true">
+                    <span className="integrated-samyama-prep-halo"></span>
+                    <span
+                      className="integrated-samyama-prep-orb"
+                      style={{
+                        transform: `scale(${isBreathingIn ? 1 : .72})`,
+                        transitionDuration: `${isBreathingIn ? 4 : breathPattern === "4:4" ? 4 : 6}s`
+                      }}
+                    ></span>
+                  </div>
                   <strong className="integrated-samyama-prep-time" aria-live="polite">{displayTime(preparationSecondsLeft)}</strong>
                   <span className="integrated-samyama-breath-cue">{isBreathingIn ? "Breathe in" : "Breathe out"} · {breathPhaseRemaining}</span>
                   <button className="button button-soft" type="button" onClick={() => setPreparationRunning(value => !value)}>{preparationRunning ? "Pause" : "Continue"}</button>
@@ -236,6 +257,10 @@ export default function SamyamaPage() {
             <div className="integrated-samyama-prep-action">
               {preparation.sitting ? <strong className="integrated-samyama-done">Done</strong> : activePreparation === "sitting" ? (
                 <>
+                  <div className="integrated-samyama-prep-animation is-sitting" aria-hidden="true">
+                    <span className="integrated-samyama-prep-halo"></span>
+                    <span className="integrated-samyama-prep-orb"></span>
+                  </div>
                   <strong className="integrated-samyama-prep-time" aria-live="polite">{displayTime(preparationSecondsLeft)}</strong>
                   <span className="integrated-samyama-breath-cue">Rest comfortably</span>
                   <button className="button button-soft" type="button" onClick={() => setPreparationRunning(value => !value)}>{preparationRunning ? "Pause" : "Continue"}</button>
@@ -249,7 +274,7 @@ export default function SamyamaPage() {
             </div>
           </section>
         </div>
-        <p className="integrated-samyama-prep-footnote">Preparation completion is saved on this device. These are gentle options, not a medical instruction; stop or return to natural breathing at any time.</p>
+        <p className="integrated-samyama-prep-footnote">Preparation completion stays for this visit and unlocks Samyama for one hour after both steps are done. Leaving the site clears it. These are gentle options, not medical instructions; stop or return to natural breathing at any time.</p>
         {(preparation.breathing || preparation.sitting) && (
           <button className="button button-soft integrated-samyama-reset-prep" type="button" disabled={["focus", "stillness", "self-guided"].includes(phase)} onClick={resetPreparation}>Reset preparation checklist</button>
         )}
