@@ -38,6 +38,16 @@
   max-width: 54ch;
 }
 
+.sadhana-reference-preview {
+  position: relative;
+  z-index: 1;
+  max-width: 58ch;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .sadhana-flower {
   position: absolute;
   top: 50%;
