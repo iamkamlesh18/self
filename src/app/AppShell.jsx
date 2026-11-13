@@ -1082,7 +1082,7 @@ export default function AppShell() {
           <Route path="/journey" element={<JourneyPage history={history} streak={streak} onClear={handleClearHistory} />} />
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
-        <MusicPage active={active} url={youtubeUrl} externalUrl={journeyExternalUrl} iframeRef={iframeRef} src={musicSrc} withSessions={withSessions} error={youtube.error} onUrl={setYoutubeUrl} onLoad={handleYoutubeLoad} onWithSessions={setWithSessions} />
+        <MusicPage active={active} url={youtubeUrl} externalUrl={externalYoutubeUrl} iframeRef={iframeRef} src={musicSrc} withSessions={withSessions} error={youtube.error} onUrl={setYoutubeUrl} onLoad={handleYoutubeLoad} onWithSessions={setWithSessions} />
       </main>
       <Footer />
       {hasAudio && <div className="mini-player" aria-live="polite">

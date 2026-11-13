@@ -27,7 +27,7 @@ export default function LibraryPage() {
       </div>
       <div className="library-grid">
         {entries.map(item => (
-          <article className="library-card" key={`${item.tradition}-${item.reference}`}>
+          <article className="library-card" key={`${item.tradition}-${item.reference}-${item.title}`}>
             <div className="library-card-meta"><span>{item.category}</span><span>{item.reference}</span></div>
             <h2>{item.title}</h2>
             <p className="library-tradition">{item.tradition}</p>
