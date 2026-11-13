@@ -1,11 +1,71 @@
-.chakra-card { margin-top:13px; padding:18px 14px; border:1px solid var(--line); border-radius:16px; background:rgba(255,255,255,.16); text-align:center; }
-.chakra-choice { min-height:34px; padding:6px 10px; }
-.chakra-choice[aria-pressed="true"] { border-color:var(--chakra-color); color:var(--chakra-color); background:var(--accent-soft); }
-.chakra-mark { margin:5px auto 3px; color:var(--chakra-color); font-size:clamp(4rem,14vw,7rem); line-height:1; text-shadow:0 0 35px var(--chakra-color); animation:chakra-breathe 5s ease-in-out infinite; }
-@keyframes chakra-breathe { 50% { transform:scale(1.1); filter:brightness(1.25); } }
-.chakra-card h2 { margin-top:5px; }
-.chakra-card blockquote { margin:16px 0 6px; color:var(--accent-deep); font:500 22px/1.35 var(--serif); }
-.chakra-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:7px; margin:17px 0; text-align:left; }
-.chakra-facts div { min-width:0; padding:9px; border:1px solid var(--line); border-radius:10px; }
-.chakra-facts dt { color:var(--muted); font-size:8px; text-transform:uppercase; letter-spacing:.08em; }
-.chakra-facts dd { margin:4px 0 0; font-size:10px; overflow-wrap:anywhere; }
+.chakra-card {
+  margin-top: 20px;
+  padding: clamp(20px, 4vw, 42px);
+  border: 1px solid var(--line);
+  border-radius: 23px;
+  background:
+    radial-gradient(ellipse at 50% 20%, rgba(114, 151, 123, .09), transparent 47%),
+    var(--solid);
+  text-align: center;
+}
+
+.chakra-choice {
+  min-height: 40px;
+  padding-inline: 13px;
+}
+
+.chakra-choice[aria-pressed="true"] {
+  border-color: var(--chakra-color);
+  color: var(--chakra-color);
+  background: var(--accent-soft);
+}
+
+.chakra-mark {
+  margin: 5px auto 10px;
+  color: var(--chakra-color);
+  font-size: clamp(5rem, 14vw, 8rem);
+  line-height: 1;
+  text-shadow: 0 0 40px var(--chakra-color);
+  animation: chakra-bloom 5s ease-in-out infinite;
+}
+
+.chakra-card h2 {
+  margin-top: 8px;
+}
+
+.chakra-card blockquote {
+  max-width: 36ch;
+  margin: 22px auto 8px;
+  color: var(--accent-deep);
+  font: 500 clamp(23px, 4vw, 32px)/1.3 var(--serif);
+}
+
+.chakra-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 23px 0;
+  text-align: left;
+}
+
+.chakra-facts div {
+  min-width: 0;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  background: var(--card);
+}
+
+.chakra-facts dt {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.chakra-facts dd {
+  margin: 6px 0 0;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}

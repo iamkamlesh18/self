@@ -1,0 +1,55 @@
+:root {
+  --ease-soft: cubic-bezier(.2, .7, .2, 1);
+  --ease-spring: cubic-bezier(.2, .8, .2, 1.15);
+  --duration-fast: 180ms;
+  --duration-medium: 420ms;
+}
+
+@keyframes page-arrive {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes atmosphere-drift {
+  0%, 100% { transform: translate3d(-1%, 0, 0) scale(1); }
+  50% { transform: translate3d(1%, 1.5%, 0) scale(1.05); }
+}
+
+@keyframes slow-turn {
+  to { transform: rotate(1turn); }
+}
+
+@keyframes mandala-turn {
+  to { rotate: 1turn; }
+}
+
+@keyframes gentle-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes gentle-glow {
+  0%, 100% { opacity: .7; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.15); }
+}
+
+@keyframes soft-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .5; transform: scale(.78); }
+}
+
+@keyframes chakra-bloom {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50% { transform: scale(1.08); filter: brightness(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}

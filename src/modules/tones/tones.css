@@ -1,18 +1,76 @@
-.small-title { margin:20px 0 10px; }
-.small-title h2 { font-size:19px; }
-.tone-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
-.tone-grid .sound-button { min-height:59px; display:grid; justify-items:center; gap:0; padding:7px 4px; text-align:center; }
-.tone-grid .sound-icon { display:none; }
-.tone-grid .sound-button strong { font:600 17px/1 var(--serif); }
-.tone-grid .sound-button small { font-size:8px; }
-.beat-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
-.beat-grid .sound-button { min-height:51px; justify-content:center; text-align:center; }
-.journey-box { margin-top:20px; padding:14px; display:grid; gap:10px; border:1px solid var(--line); border-radius:13px; background:rgba(255,255,255,.18); }
-.journey-box .sub { font-size:10px; }
-.journey-box .chip-row .chip { min-height:32px; padding:5px 9px; }
-.journey-box>.button { justify-self:start; }
-.volume-row { display:grid; grid-template-columns:auto 1fr 40px; align-items:center; gap:10px; margin-top:16px; }
-.volume-row label { font-size:10px; font-weight:600; }
-.volume-row input { width:100%; accent-color:var(--accent); }
-.volume-row output { color:var(--muted); font-size:9px; text-align:right; }
-.mode-chip { flex:1 1 130px; }
+.small-title {
+  margin: 28px 0 14px;
+}
+
+.small-title h2 {
+  font-size: clamp(1.45rem, 2.5vw, 1.9rem);
+}
+
+.tone-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.tone-grid .sound-button {
+  min-height: 105px;
+  display: grid;
+  justify-items: center;
+  gap: 5px;
+  padding: 10px 6px;
+  text-align: center;
+}
+
+.tone-grid .sound-icon {
+  display: none;
+}
+
+.tone-grid .sound-button strong {
+  font: 600 21px/1 var(--serif);
+}
+
+.tone-grid .sound-button small {
+  font-size: 10px;
+}
+
+.beat-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.beat-grid .sound-button {
+  min-height: 80px;
+  justify-content: center;
+  text-align: center;
+}
+
+.journey-box {
+  display: grid;
+  gap: 14px;
+  margin-top: 24px;
+  padding: 20px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--solid);
+}
+
+.journey-box .sub {
+  font-size: 13px;
+}
+
+.journey-box .chip-row .chip {
+  min-height: 38px;
+  padding: 7px 13px;
+}
+
+.journey-box > .button {
+  justify-self: start;
+}
+
+.mode-chip {
+  flex: 1 1 180px;
+}
+
+@media (max-width: 390px) {
+  .tone-grid,
+  .beat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

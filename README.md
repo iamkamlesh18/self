@@ -28,9 +28,11 @@ Vite prints the local development URL. The production build is written to `dist/
 
 - `src/App.jsx` mounts the app with `HashRouter` so every page works after a GitHub Pages refresh.
 - `src/app/AppShell.jsx` owns shared practice, preference, timer, and audio state; shared playback stays mounted between routes.
-- `src/modules/<page>/` keeps each page's component and its own content data together. Samyama and the reading library also have matching stylesheets.
+- `src/modules/<page>/` keeps each page's component, visual styles, and content data together.
 - `src/shared/components/` contains the header, navigation, footer, and reusable phrase and wisdom views.
-- `src/index.css` contains the shared theme, responsive layout, and reduced-motion behavior.
+- `src/theme/tokens.css` is the separate light/dark palette and design-token file; edit it to restyle the whole site without changing page content.
+- `src/theme/motion.css` contains shared animations and reduced-motion behavior, separate from the theme palette.
+- `src/index.css` contains shared typography, surfaces, and responsive foundations. Component and page styles live beside their components.
 - `public/` is for static assets. Vite's `base` is `/self/` for the current GitHub Pages repository.
 - `.github/workflows/deploy.yml` is already configured to build and publish `dist/` on pushes to `main`; leave it unchanged.
 
